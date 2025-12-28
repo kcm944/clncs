@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// Healthcare Directory API - Final Optimized Version for Render.com
+// Healthcare Directory API - Optimized Version for Render.com
 // Features: PostgreSQL, JWT Auth, Rate Limiting, CORS, Error Handling, Transactions
 // Fixed: View conflicts, DB connection, error handling, and data type compatibility
 // ═══════════════════════════════════════════════════════════════════════════
@@ -70,7 +70,7 @@ async function initializeDatabase() {
         latitude REAL,
         longitude REAL,
         notes TEXT,
-        is_active INTEGER DEFAULT 1,  -- Changed to INTEGER for compatibility
+        is_active INTEGER DEFAULT 1,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_specialty
@@ -101,7 +101,7 @@ async function initializeDatabase() {
         c.last_updated
       FROM clinics c
       JOIN specialties s ON c.specialty_id = s.id
-      WHERE c.is_active = 1  -- Using 1 instead of TRUE for compatibility
+      WHERE c.is_active = 1
       ORDER BY s.display_order, c.name
     `);
 
@@ -271,6 +271,48 @@ app.get('/api/clinics', async (req, res) => {
   } catch (err) {
     console.error('Clinics fetch error:', err);
     res.status(500).json({ error: 'Failed to fetch clinics' });
+  }
+});
+
+// Get clinic by ID
+app.get('/api/clinics/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(`
+      SELECT
+        c.*,
+        s.name_ar AS specialty_name,
+        s.icon AS specialty_icon
+      FROM clinics c
+      JOIN specialties s ON c.specialty_id = s.id
+      WHERE c.id = $1
+    `, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Clinic not found' });
+    }
+
+    res.json({
+      success: true,
+      clinic: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Clinic fetch error:', err);
+    res.status(500).json({ error: 'Failed to fetch clinic' });
+  }
+});
+
+// Get all specialties
+app.get('/api/specialties', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM specialties ORDER BY display_order, name_ar');
+    res.json({
+      success: true,
+      specialties: result.rows
+    });
+  } catch (err) {
+    console.error('Specialties fetch error:', err);
+    res.status(500).json({ error: 'Failed to fetch specialties' });
   }
 });
 
