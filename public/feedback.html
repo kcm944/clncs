@@ -377,7 +377,7 @@
             <h2>📢 ساعدنا في تحسين الدليل</h2>
             <p>إذا وجدت معلومة خاطئة أو غير محدثة، نرجو إخبارنا.</p>
             <p>ملاحظتك ستساعد الآخرين في الوصول للمعلومات الصحيحة.</p>
-            
+
             <div class="highlight">
                 <p>⚠️ <strong>ملاحظة مهمة:</strong> جميع الملاحظات تُراجع يدوياً من قبل فريق العمل قبل التحديث. قد يستغرق الأمر 24-48 ساعة.</p>
             </div>
@@ -386,7 +386,7 @@
         <!-- Form Box -->
         <div class="form-box" id="formBox">
             <h2>📝 أرسل ملاحظتك</h2>
-            
+
             <form id="feedbackForm">
                 <!-- اسم العيادة -->
                 <div class="form-group">
@@ -394,9 +394,9 @@
                         🏥 اسم العيادة أو الطبيب
                         <span class="optional">(اختياري)</span>
                     </label>
-                    <input 
-                        type="text" 
-                        id="clinicName" 
+                    <input
+                        type="text"
+                        id="clinicName"
                         placeholder="مثال: عيادة الدكتور محمد"
                     >
                 </div>
@@ -409,41 +409,41 @@
                     </label>
                     <div class="radio-group">
                         <div class="radio-option">
-                            <input 
-                                type="radio" 
-                                id="type_phone" 
-                                name="feedbackType" 
+                            <input
+                                type="radio"
+                                id="type_phone"
+                                name="feedbackType"
                                 value="phone"
                                 required
                             >
                             <label for="type_phone">📞 رقم هاتف خاطئ أو لا يعمل</label>
                         </div>
-                        
+
                         <div class="radio-option">
-                            <input 
-                                type="radio" 
-                                id="type_address" 
-                                name="feedbackType" 
+                            <input
+                                type="radio"
+                                id="type_address"
+                                name="feedbackType"
                                 value="address"
                             >
                             <label for="type_address">📍 عنوان غير صحيح أو غير دقيق</label>
                         </div>
-                        
+
                         <div class="radio-option">
-                            <input 
-                                type="radio" 
-                                id="type_hours" 
-                                name="feedbackType" 
+                            <input
+                                type="radio"
+                                id="type_hours"
+                                name="feedbackType"
                                 value="hours"
                             >
                             <label for="type_hours">🕐 أوقات العمل غير صحيحة</label>
                         </div>
-                        
+
                         <div class="radio-option">
-                            <input 
-                                type="radio" 
-                                id="type_other" 
-                                name="feedbackType" 
+                            <input
+                                type="radio"
+                                id="type_other"
+                                name="feedbackType"
                                 value="other"
                             >
                             <label for="type_other">📝 ملاحظة أخرى</label>
@@ -457,8 +457,8 @@
                         💬 تفاصيل الملاحظة
                         <span class="required">*</span>
                     </label>
-                    <textarea 
-                        id="message" 
+                    <textarea
+                        id="message"
                         placeholder="اكتب التفاصيل هنا...&#10;&#10;مثال: رقم الهاتف المذكور لا يرد، الرقم الصحيح هو..."
                         required
                     ></textarea>
@@ -473,9 +473,9 @@
                         📧 وسيلة التواصل
                         <span class="optional">(اختياري - للرد إذا لزم الأمر)</span>
                     </label>
-                    <input 
-                        type="text" 
-                        id="contact" 
+                    <input
+                        type="text"
+                        id="contact"
                         placeholder="رقم هاتف أو بريد إلكتروني"
                     >
                     <small style="color: #999; font-size: 14px; display: block; margin-top: 8px;">
@@ -516,7 +516,7 @@
         function updateConnectionStatus() {
             const status = document.getElementById('connectionStatus');
             const statusText = document.getElementById('statusText');
-            
+
             if (navigator.onLine) {
                 status.className = 'connection-status online';
                 statusText.textContent = 'متصل';
@@ -618,7 +618,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const clinicName = urlParams.get('clinic');
-            
+
             if (clinicName) {
                 document.getElementById('clinicName').value = decodeURIComponent(clinicName);
             }

@@ -8,7 +8,6 @@
         /* ═══════════════════════════════════════════════════════
            BASE STYLES - محسّن للتجربة المتنقلة
            ═══════════════════════════════════════════════════════ */
-        
         * {
             margin: 0;
             padding: 0;
@@ -35,7 +34,6 @@
         /* ═══════════════════════════════════════════════════════
            CONNECTION STATUS - محسّن للهواتف
            ═══════════════════════════════════════════════════════ */
-        
         .connection-status {
             position: fixed;
             top: 12px;
@@ -79,7 +77,6 @@
         /* ═══════════════════════════════════════════════════════
            HEADER - محسّن للتجربة المتنقلة
            ═══════════════════════════════════════════════════════ */
-        
         header {
             background: white;
             padding: 14px 16px;
@@ -134,7 +131,6 @@
         /* ═══════════════════════════════════════════════════════
            CONTAINER - محسّن للتجربة المتنقلة
            ═══════════════════════════════════════════════════════ */
-        
         .container {
             max-width: 1000px;
             margin: 20px auto;
@@ -144,7 +140,6 @@
         /* ═══════════════════════════════════════════════════════
            FILTER SECTION - محسّن للمس
            ═══════════════════════════════════════════════════════ */
-        
         .filter-section {
             background: white;
             padding: 18px;
@@ -232,7 +227,6 @@
         /* ═══════════════════════════════════════════════════════
            STATS - محسّن للتجربة
            ═══════════════════════════════════════════════════════ */
-        
         .stats {
             background: white;
             padding: 14px 16px;
@@ -266,7 +260,6 @@
         /* ═══════════════════════════════════════════════════════
            LOADING - محسّن للتجربة
            ═══════════════════════════════════════════════════════ */
-        
         .loading {
             text-align: center;
             padding: 40px 20px;
@@ -302,7 +295,6 @@
         /* ═══════════════════════════════════════════════════════
            CLINICS GRID - محسّن للتجربة المتنقلة
            ═══════════════════════════════════════════════════════ */
-        
         .clinics-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -443,7 +435,6 @@
         /* ═══════════════════════════════════════════════════════
            EMPTY STATE - محسّن للتجربة
            ═══════════════════════════════════════════════════════ */
-        
         .empty-state {
             background: white;
             padding: 30px 20px;
@@ -472,9 +463,8 @@
         }
 
         /* ═══════════════════════════════════════════════════════
-           RESPONSIVE - تحسينات خاصة للهواتف والشاشات الكبيرة
+           RESPONSIVE - تحسينات خاصة بالهواتف والشاشات الكبيرة
            ═══════════════════════════════════════════════════════ */
-        
         @media (max-width: 768px) {
             html {
                 font-size: 15px;
@@ -705,7 +695,6 @@
         /* ═══════════════════════════════════════════════════════
            تحسينات إضافية للتجربة
            ═══════════════════════════════════════════════════════ */
-        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -818,19 +807,13 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api';
-        let allClinics = [];
-        let filteredClinics = [];
-        let currentFilter = null;
-
         // ═══════════════════════════════════════════════════════
         // متابعة حالة الاتصال
         // ═══════════════════════════════════════════════════════
-
         function updateConnectionStatus() {
             const status = document.getElementById('connectionStatus');
             const statusText = document.getElementById('statusText');
-            
+
             if (navigator.onLine) {
                 status.className = 'connection-status online';
                 statusText.textContent = 'متصل';
@@ -847,17 +830,16 @@
         // ═══════════════════════════════════════════════════════
         // تحميل التخصصات
         // ═══════════════════════════════════════════════════════
-
         async function loadSpecialties() {
             try {
-                const response = await fetch(`${API_URL}/specialties`);
+                const response = await fetch('http://localhost:3000/api/specialties');
                 const data = await response.json();
-                
+
                 const filtersDiv = document.getElementById('specialtyFilters');
-                
+
                 filtersDiv.innerHTML = data.specialties.map(specialty => `
-                    <button 
-                        class="specialty-btn" 
+                    <button
+                        class="specialty-btn"
                         onclick="filterBySpecialty('${specialty.name_ar}')"
                         data-specialty="${specialty.name_ar}"
                         role="button"
@@ -880,8 +862,8 @@
                 ];
                 const filtersDiv = document.getElementById('specialtyFilters');
                 filtersDiv.innerHTML = localSpecialties.map(specialty => `
-                    <button 
-                        class="specialty-btn" 
+                    <button
+                        class="specialty-btn"
                         onclick="filterBySpecialty('${specialty.name_ar}')"
                         data-specialty="${specialty.name_ar}"
                         role="button"
@@ -897,26 +879,25 @@
         // ═══════════════════════════════════════════════════════
         // تحميل العيادات
         // ═══════════════════════════════════════════════════════
-
         async function loadClinics() {
             try {
-                const response = await fetch(`${API_URL}/clinics`);
+                const response = await fetch('http://localhost:3000/api/clinics');
                 const data = await response.json();
-                
+
                 allClinics = data.clinics || [];
                 filteredClinics = allClinics;
-                
+
                 if (!allClinics.length) {
                     showEmptyState();
                 } else {
                     displayClinics(filteredClinics);
                 }
-                
+
                 document.getElementById('loading').style.display = 'none';
             } catch (error) {
                 console.error('Error loading clinics:', error);
                 document.getElementById('loading').style.display = 'none';
-                
+
                 // بيانات محلية كـ backup
                 if (!navigator.onLine) {
                     loadLocalClinics();
@@ -929,7 +910,6 @@
         // ═══════════════════════════════════════════════════════
         // عرض العيادات
         // ═══════════════════════════════════════════════════════
-
         function displayClinics(clinics) {
             const grid = document.getElementById('clinicsGrid');
             const count = document.getElementById('clinicsCount');
@@ -953,24 +933,24 @@
                             ${clinic.specialty_icon || '🏥'} ${clinic.specialty_name}
                         </span>
                     </div>
-                    
+
                     <div class="clinic-info">
                         <span class="icon">📍</span>
                         <span>${clinic.address}</span>
                     </div>
-                    
+
                     <div class="clinic-info">
                         <span class="icon">📞</span>
                         <span>${clinic.phone}</span>
                     </div>
-                    
+
                     ${clinic.working_hours ? `
                         <div class="clinic-info">
                             <span class="icon">🕐</span>
                             <span>${clinic.working_hours}</span>
                         </div>
                     ` : ''}
-                    
+
                     <div class="clinic-actions">
                         <button class="btn-call" onclick="event.stopPropagation(); callClinic('${clinic.phone}')" aria-label="اتصال ${clinic.phone}">
                             📞 اتصل
@@ -997,7 +977,6 @@
         // ═══════════════════════════════════════════════════════
         // عرض حالة فارغة
         // ═══════════════════════════════════════════════════════
-
         function showEmptyState() {
             document.getElementById('clinicsGrid').style.display = 'none';
             document.getElementById('emptyState').classList.add('active');
@@ -1006,7 +985,6 @@
         // ═══════════════════════════════════════════════════════
         // تحميل عيادات محلية (backup)
         // ═══════════════════════════════════════════════════════
-
         function loadLocalClinics() {
             const localClinics = [
                 {
@@ -1056,10 +1034,9 @@
         // ═══════════════════════════════════════════════════════
         // التصفية حسب التخصص
         // ═══════════════════════════════════════════════════════
-
         function filterBySpecialty(specialty) {
             currentFilter = specialty;
-            
+
             // تحديث الأزرار
             document.querySelectorAll('.specialty-btn').forEach(btn => {
                 if (btn.dataset.specialty === specialty) {
@@ -1070,7 +1047,7 @@
             });
 
             // تصفية العيادات
-            filteredClinics = allClinics.filter(clinic => 
+            filteredClinics = allClinics.filter(clinic =>
                 clinic.specialty_name === specialty
             );
 
@@ -1081,9 +1058,9 @@
 
             // التمرير إلى قسم النتائج على الهواتف
             if (window.innerWidth <= 768) {
-                document.getElementById('clinicsCount').scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
+                document.getElementById('clinicsCount').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             }
         }
@@ -1091,24 +1068,23 @@
         // ═══════════════════════════════════════════════════════
         // إلغاء التصفية
         // ═══════════════════════════════════════════════════════
-
         function clearFilter() {
             currentFilter = null;
             filteredClinics = allClinics;
-            
+
             document.querySelectorAll('.specialty-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
             displayClinics(filteredClinics);
-            
+
             document.getElementById('clearFilterBtn').classList.remove('active');
 
             // التمرير إلى قسم النتائج على الهواتف
             if (window.innerWidth <= 768) {
-                document.getElementById('clinicsCount').scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
+                document.getElementById('clinicsCount').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             }
         }
@@ -1116,7 +1092,6 @@
         // ═══════════════════════════════════════════════════════
         // الاتصال بالعيادة
         // ═══════════════════════════════════════════════════════
-
         function callClinic(phone) {
             if (phone && phone !== 'undefined') {
                 window.location.href = `tel:${phone}`;
@@ -1126,7 +1101,6 @@
         // ═══════════════════════════════════════════════════════
         // الانتقال لصفحة التفاصيل
         // ═══════════════════════════════════════════════════════
-
         function goToClinic(id) {
             window.location.href = `clinic-detail.html?id=${id}`;
         }
@@ -1134,7 +1108,6 @@
         // ═══════════════════════════════════════════════════════
         // تحميل البيانات عند فتح الصفحة
         // ═══════════════════════════════════════════════════════
-
         document.addEventListener('DOMContentLoaded', () => {
             loadSpecialties();
             loadClinics();

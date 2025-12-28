@@ -413,7 +413,7 @@
         function updateConnectionStatus() {
             const status = document.getElementById('connectionStatus');
             const statusText = document.getElementById('statusText');
-            
+
             if (navigator.onLine) {
                 status.className = 'connection-status online';
                 statusText.textContent = 'متصل';
@@ -442,14 +442,14 @@
 
             try {
                 const response = await fetch(`${API_URL}/clinics/${clinicId}`);
-                
+
                 if (!response.ok) {
                     throw new Error('Clinic not found');
                 }
 
                 const data = await response.json();
                 currentClinic = data.clinic;
-                
+
                 displayClinic(currentClinic);
             } catch (error) {
                 console.error('Error loading clinic:', error);
@@ -467,7 +467,7 @@
 
             // الاسم والتخصص
             document.getElementById('clinicName').textContent = clinic.name;
-            document.getElementById('clinicSpecialty').textContent = 
+            document.getElementById('clinicSpecialty').textContent =
                 `${clinic.specialty_icon || '🏥'} ${clinic.specialty_name}`;
 
             // العنوان
