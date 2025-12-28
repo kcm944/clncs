@@ -3,85 +3,856 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختبار الاتصال</title>
+    <title>اختبار الاتصال الشامل - دليل العيادات</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
-        .success { background-color: #d4edda; color: #155724; }
-        .error { background-color: #f8d7da; color: #721c24; }
-        button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
+        :root {
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --primary-color: #007bff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+        }
+
+        .test-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .status {
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status.success {
+            background-color: #d1e7dd;
+            color: #155724;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--error-color);
+        }
+
+        .status.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid var(--info-color);
+        }
+
+        .status-icon {
+            font-size: 20px;
+        }
+
+        .details {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .details.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toggle-details {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .toggle-details:hover {
+            color: #0056b3;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin: 30px auto 0;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .summary.show {
+            display: block;
+        }
+
+        .summary h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .test-section {
+                padding: 15px;
+            }
+
+            .test-section h2 {
+                font-size: 18px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>اختبار الاتصال بقاعدة البيانات</h1>
+    <div class="container">
+        <h1>🔍 اختبار الاتصال الشامل</h1>
 
-    <div id="healthStatus" class="status">جاري التحقق من حالة الخادم...</div>
-    <div id="dbStatus" class="status">جاري التحقق من قاعدة البيانات...</div>
-    <div id="clinicsStatus" class="status">جاري جلب بيانات العيادات...</div>
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
 
-    <button onclick="testAllConnections()">اختبار جميع الاتصالات</button>
+        <!-- اختبار حالة الخادم -->
+        <div class="test-section">
+            <h2>⚙️ حالة الخادم</h2>
+            <div id="healthStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من حالة الخادم...</span>
+            </div>
+            <div class="details" id="healthDetails"></div>
+        </div>
+
+        <!-- اختبار قاعدة البيانات -->
+        <div class="test-section">
+            <h2>🗃️ قاعدة البيانات</h2>
+            <div id="dbStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من قاعدة البيانات...</span>
+            </div>
+            <div class="details" id="dbDetails"></div>
+        </div>
+
+        <!-- اختبار الجداول -->
+        <div class="test-section">
+            <h2>📋 الجداول</h2>
+            <div id="tablesStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من الجداول...</span>
+            </div>
+            <div class="details" id="tablesDetails"></div>
+        </div>
+
+        <!-- اختبار العيادات -->
+        <div class="test-section">
+            <h2>🏥 بيانات العيادات</h2>
+            <div id="clinicsStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري جلب بيانات العيادات...</span>
+            </div>
+            <div class="details" id="clinicsDetails"></div>
+        </div>
+
+        <!-- اختبار التخصصات -->
+        <div class="test-section">
+            <h2>🩺 التخصصات الطبية</h2>
+            <div id="specialtiesStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري جلب التخصصات...</span>
+            </div>
+            <div class="details" id="specialtiesDetails"></div>
+        </div>
+
+        <!-- اختبار الملاحظات -->
+        <div class="test-section">
+            <h2>📝 الملاحظات</h2>
+            <div id="feedbacksStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من الملاحظات...</span>
+            </div>
+            <div class="details" id="feedbacksDetails"></div>
+        </div>
+
+        <!-- اختبار المستخدمين -->
+        <div class="test-section">
+            <h2>👤 المستخدمين</h2>
+            <div id="usersStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من المستخدمين...</span>
+            </div>
+            <div class="details" id="usersDetails"></div>
+        </div>
+
+        <!-- اختبار الإشعارات -->
+        <div class="test-section">
+            <h2>🔔 الإشعارات</h2>
+            <div id="notificationsStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من الإشعارات...</span>
+            </div>
+            <div class="details" id="notificationsDetails"></div>
+        </div>
+
+        <!-- اختبار الأخبار -->
+        <div class="test-section">
+            <h2>📰 الأخبار</h2>
+            <div id="newsStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من الأخبار...</span>
+            </div>
+            <div class="details" id="newsDetails"></div>
+        </div>
+
+        <!-- اختبار سجلات المزامنة -->
+        <div class="test-section">
+            <h2>🔄 سجلات المزامنة</h2>
+            <div id="syncStatus" class="status info">
+                <span class="loading"></span>
+                <span>جاري التحقق من سجلات المزامنة...</span>
+            </div>
+            <div class="details" id="syncDetails"></div>
+        </div>
+
+        <button onclick="runAllTests()">⚡ إجراء جميع الاختبارات</button>
+
+        <!-- ملخص النتائج -->
+        <div class="summary" id="summary">
+            <h3>📊 ملخص النتائج</h3>
+            <div id="summaryContent"></div>
+        </div>
+    </div>
 
     <script>
-        function updateStatus(elementId, message, isSuccess) {
+        const API_URL = 'http://localhost:3000/api';
+        let testResults = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            warnings: 0
+        };
+
+        // تحديث شريط التقدم
+        function updateProgress() {
+            const progress = (testResults.passed + testResults.failed + testResults.warnings) / testResults.total * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // تحديث الحالة
+        function updateStatus(elementId, message, status, icon = '', details = '') {
             const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.className = isSuccess ? 'status success' : 'status error';
+            const detailsElement = document.getElementById(`${elementId}Details`);
+
+            // تحديث الحالة
+            element.innerHTML = `
+                ${icon ? `<span class="status-icon">${icon}</span>` : ''}
+                <span>${message}</span>
+                ${details ? `<span class="toggle-details" onclick="toggleDetails('${elementId}')">عرض التفاصيل</span>` : ''}
+            `;
+
+            // تحديث الفئة
+            element.className = `status ${status}`;
+
+            // تحديث التفاصيل
+            if (details) {
+                detailsElement.innerHTML = `<pre>${details}</pre>`;
+            }
+
+            // تحديث الملخص
+            updateSummary();
         }
 
-        function testHealth() {
-            fetch('/api/health')
-                .then(response => response.json())
-                .then(data => {
-                    updateStatus('healthStatus', `حالة الخادم: ${data.status}`, data.status === 'ok');
-                })
-                .catch(error => {
-                    updateStatus('healthStatus', `خطأ في الاتصال بالخادم: ${error.message}`, false);
-                });
+        // تبديل عرض التفاصيل
+        function toggleDetails(elementId) {
+            const detailsElement = document.getElementById(`${elementId}Details`);
+            detailsElement.classList.toggle('show');
         }
 
-        function testDatabase() {
-            fetch('/test-connection')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.databaseConnected) {
-                        updateStatus('dbStatus', `قاعدة البيانات متصلة: ${data.clinicsCount} عيادة مسجلة`, true);
-                    } else {
-                        updateStatus('dbStatus', `خطأ في قاعدة البيانات: ${data.error}`, false);
-                    }
-                })
-                .catch(error => {
-                    updateStatus('dbStatus', `خطأ في الاتصال بقاعدة البيانات: ${error.message}`, false);
-                });
+        // تحديث الملخص
+        function updateSummary() {
+            const summaryContent = document.getElementById('summaryContent');
+            summaryContent.innerHTML = `
+                <div class="summary-item">
+                    <span>إجمالي الاختبارات:</span>
+                    <span>${testResults.total}</span>
+                </div>
+                <div class="summary-item">
+                    <span>ناجحة:</span>
+                    <span style="color: var(--success-color);">${testResults.passed}</span>
+                </div>
+                <div class="summary-item">
+                    <span>فاشلة:</span>
+                    <span style="color: var(--error-color);">${testResults.failed}</span>
+                </div>
+                <div class="summary-item">
+                    <span>تحذيرات:</span>
+                    <span style="color: var(--warning-color);">${testResults.warnings}</span>
+                </div>
+                <div class="summary-item">
+                    <span>نسبة النجاح:</span>
+                    <span>${testResults.total > 0 ? Math.round((testResults.passed / testResults.total) * 100) : 0}%</span>
+                </div>
+            `;
+
+            // عرض الملخص إذا كانت هناك نتائج
+            if (testResults.total > 0) {
+                document.getElementById('summary').classList.add('show');
+            }
         }
 
-        function testClinics() {
-            fetch('/api/clinics')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        updateStatus('clinicsStatus', `تم جلب ${data.count} عيادة بنجاح`, true);
-                    } else {
-                        updateStatus('clinicsStatus', `خطأ في جلب العيادات: ${data.error}`, false);
-                    }
-                })
-                .catch(error => {
-                    updateStatus('clinicsStatus', `خطأ في جلب العيادات: ${error.message}`, false);
-                });
+        // اختبار حالة الخادم
+        async function testHealth() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+
+                if (data.status === 'ok') {
+                    testResults.passed++;
+                    updateStatus(
+                        'healthStatus',
+                        'حالة الخادم: يعمل بشكل جيد',
+                        'success',
+                        '✅',
+                        `الخادم يعمل بشكل جيد\nالوقت: ${new Date(data.timestamp).toLocaleString()}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'healthStatus',
+                        `حالة الخادم: ${data.status}`,
+                        'error',
+                        '❌',
+                        `حالة الخادم: ${data.status}\nالوقت: ${new Date(data.timestamp).toLocaleString()}`
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'healthStatus',
+                    `خطأ في الاتصال بالخادم: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
         }
 
-        function testAllConnections() {
-            updateStatus('healthStatus', 'جاري التحقق من حالة الخادم...', false);
-            updateStatus('dbStatus', 'جاري التحقق من قاعدة البيانات...', false);
-            updateStatus('clinicsStatus', 'جاري جلب بيانات العيادات...', false);
+        // اختبار قاعدة البيانات
+        async function testDatabase() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/test-connection`);
+                const data = await response.json();
 
-            testHealth();
-            testDatabase();
-            testClinics();
+                if (data.databaseConnected) {
+                    testResults.passed++;
+                    updateStatus(
+                        'dbStatus',
+                        `قاعدة البيانات متصلة: ${data.clinicsCount} عيادة مسجلة`,
+                        'success',
+                        '✅',
+                        `قاعدة البيانات: ${data.database}\nعدد العيادات: ${data.clinicsCount}\nالوقت: ${new Date(data.timestamp).toLocaleString()}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'dbStatus',
+                        `خطأ في قاعدة البيانات: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'dbStatus',
+                    `خطأ في الاتصال بقاعدة البيانات: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
         }
 
-        // اختبار تلقائي عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', testAllConnections);
+        // اختبار الجداول
+        async function testTables() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/tables-status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const tableCount = Object.keys(data.tables).length;
+                    const totalRecords = Object.values(data.tables).reduce((sum, table) => sum + table.count, 0);
+
+                    testResults.passed++;
+                    updateStatus(
+                        'tablesStatus',
+                        `جميع الجداول تعمل بشكل صحيح (${tableCount} جدول، ${totalRecords} سجل)`,
+                        'success',
+                        '✅',
+                        `عدد الجداول: ${tableCount}\nإجمالي السجلات: ${totalRecords}\n${Object.entries(data.tables).map(([name, info]) => `${name}: ${info.count} سجل`).join('\n')}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'tablesStatus',
+                        `خطأ في الجداول: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'tablesStatus',
+                    `خطأ في التحقق من الجداول: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // اختبار العيادات
+        async function testClinics() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/clinics`);
+                const data = await response.json();
+
+                if (data.success && data.clinics && data.clinics.length > 0) {
+                    const activeClinics = data.clinics.filter(c => c.is_active).length;
+                    const specialtiesCount = new Set(data.clinics.map(c => c.specialty_name)).size;
+
+                    testResults.passed++;
+                    updateStatus(
+                        'clinicsStatus',
+                        `تم جلب ${data.clinics.length} عيادة (${activeClinics} نشطة، ${specialtiesCount} تخصص)`,
+                        'success',
+                        '✅',
+                        `إجمالي العيادات: ${data.clinics.length}\nعيادات نشطة: ${activeClinics}\nتخصصات مختلفة: ${specialtiesCount}`
+                    );
+                } else if (data.success) {
+                    testResults.warnings++;
+                    updateStatus(
+                        'clinicsStatus',
+                        'لا توجد عيادات مسجلة',
+                        'warning',
+                        '⚠️'
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'clinicsStatus',
+                        `خطأ في جلب العيادات: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'clinicsStatus',
+                    `خطأ في جلب العيادات: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // اختبار التخصصات
+        async function testSpecialties() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/specialties`);
+                const data = await response.json();
+
+                if (data.success && data.specialties && data.specialties.length > 0) {
+                    testResults.passed++;
+                    updateStatus(
+                        'specialtiesStatus',
+                        `تم جلب ${data.specialties.length} تخصص طبية`,
+                        'success',
+                        '✅',
+                        `عدد التخصصات: ${data.specialties.length}\n${data.specialties.map(s => `${s.icon} ${s.name_ar}`).join('\n')}`
+                    );
+                } else if (data.success) {
+                    testResults.warnings++;
+                    updateStatus(
+                        'specialtiesStatus',
+                        'لا توجد تخصصات مسجلة',
+                        'warning',
+                        '⚠️'
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'specialtiesStatus',
+                        `خطأ في جلب التخصصات: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'specialtiesStatus',
+                    `خطأ في جلب التخصصات: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // اختبار الملاحظات
+        async function testFeedbacks() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/feedbacks`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const pendingCount = data.feedbacks.filter(f => f.status === 'pending').length;
+                    const appliedCount = data.feedbacks.filter(f => f.status === 'applied').length;
+
+                    testResults.passed++;
+                    updateStatus(
+                        'feedbacksStatus',
+                        `تم جلب ${data.feedbacks.length} ملاحظة (${pendingCount} معلقة، ${appliedCount} مطبقة)`,
+                        'success',
+                        '✅',
+                        `إجمالي الملاحظات: ${data.feedbacks.length}\nمعلقة: ${pendingCount}\nمطبقة: ${appliedCount}\nمرفوضة: ${data.feedbacks.filter(f => f.status === 'rejected').length}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'feedbacksStatus',
+                        `خطأ في جلب الملاحظات: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'feedbacksStatus',
+                    `خطأ في جلب الملاحظات: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // اختبار المستخدمين
+        async function testUsers() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/admins`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const activeUsers = data.admins.filter(u => u.is_active).length;
+                    const superAdmins = data.admins.filter(u => u.role === 'super_admin').length;
+
+                    testResults.passed++;
+                    updateStatus(
+                        'usersStatus',
+                        `تم جلب ${data.admins.length} مستخدم (${activeUsers} نشط، ${superAdmins} مشرف)`,
+                        'success',
+                        '✅',
+                        `إجمالي المستخدمين: ${data.admins.length}\nمستخدمين نشطين: ${activeUsers}\nمشرفين: ${superAdmins}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'usersStatus',
+                        `خطأ في جلب المستخدمين: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'usersStatus',
+                    `خطأ في جلب المستخدمين: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // اختبار الإشعارات
+        async function testNotifications() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/notifications`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const unreadCount = data.notifications.filter(n => !n.is_read).length;
+
+                    testResults.passed++;
+                    updateStatus(
+                        'notificationsStatus',
+                        `تم جلب ${data.notifications.length} إشعار (${unreadCount} غير مقروء)`,
+                        'success',
+                        '✅',
+                        `إجمالي الإشعارات: ${data.notifications.length}\nغير مقروءة: ${unreadCount}\nمقروءة: ${data.notifications.filter(n => n.is_read).length}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'notificationsStatus',
+                        `خطأ في جلب الإشعارات: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'notificationsStatus',
+                    `خطأ في جلب الإشعارات: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // اختبار الأخبار
+        async function testNews() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/news`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const activeNews = data.news.filter(n => n.is_active).length;
+
+                    testResults.passed++;
+                    updateStatus(
+                        'newsStatus',
+                        `تم جلب ${data.news.length} خبر (${activeNews} نشط)`,
+                        'success',
+                        '✅',
+                        `إجمالي الأخبار: ${data.news.length}\nنشطة: ${activeNews}\nغير نشطة: ${data.news.filter(n => !n.is_active).length}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'newsStatus',
+                        `خطأ في جلب الأخبار: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'newsStatus',
+                    `خطأ في جلب الأخبار: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // اختبار سجلات المزامنة
+        async function testSyncLogs() {
+            testResults.total++;
+            try {
+                const response = await fetch(`${API_URL}/sync-logs`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const lastSync = data.logs.length > 0 ? new Date(data.logs[0].sync_timestamp).toLocaleString() : 'لا يوجد';
+
+                    testResults.passed++;
+                    updateStatus(
+                        'syncStatus',
+                        `تم جلب ${data.logs.length} سجل مزامنة (آخر مزامنة: ${lastSync})`,
+                        'success',
+                        '✅',
+                        `إجمالي السجلات: ${data.logs.length}\nآخر مزامنة: ${lastSync}\nإجمالي التحديثات: ${data.logs.reduce((sum, log) => sum + log.records_updated, 0)}`
+                    );
+                } else {
+                    testResults.failed++;
+                    updateStatus(
+                        'syncStatus',
+                        `خطأ في جلب سجلات المزامنة: ${data.error}`,
+                        'error',
+                        '❌'
+                    );
+                }
+            } catch (error) {
+                testResults.failed++;
+                updateStatus(
+                    'syncStatus',
+                    `خطأ في جلب سجلات المزامنة: ${error.message}`,
+                    'error',
+                    '❌'
+                );
+            }
+        }
+
+        // تشغيل جميع الاختبارات
+        async function runAllTests() {
+            // إعادة تعيين النتائج
+            testResults = {
+                total: 0,
+                passed: 0,
+                failed: 0,
+                warnings: 0
+            };
+
+            // إعادة تعيين شريط التقدم
+            document.getElementById('progressBar').style.width = '0%';
+
+            // إعادة تعيين جميع الحالات
+            document.querySelectorAll('.status').forEach(el => {
+                el.innerHTML = '<span class="loading"></span><span>جاري التحقق...</span>';
+                el.className = 'status info';
+            });
+
+            // إخفاء التفاصيل
+            document.querySelectorAll('.details').forEach(el => {
+                el.classList.remove('show');
+            });
+
+            // إخفاء الملخص
+            document.getElementById('summary').classList.remove('show');
+
+            // تشغيل جميع الاختبارات
+            await testHealth();
+            await testDatabase();
+            await testTables();
+            await testClinics();
+            await testSpecialties();
+            await testFeedbacks();
+            await testUsers();
+            await testNotifications();
+            await testNews();
+            await testSyncLogs();
+
+            // تحديث شريط التقدم
+            updateProgress();
+        }
+
+        // تشغيل الاختبارات تلقائيًا عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', runAllTests);
     </script>
 </body>
 </html>
