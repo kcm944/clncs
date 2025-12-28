@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الاتصال</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>اختبار الاتصال بقاعدة البيانات</h1>
+
+    <div id="healthStatus" class="status">جاري التحقق من حالة الخادم...</div>
+    <div id="dbStatus" class="status">جاري التحقق من قاعدة البيانات...</div>
+    <div id="clinicsStatus" class="status">جاري جلب بيانات العيادات...</div>
+
+    <button onclick="testAllConnections()">اختبار جميع الاتصالات</button>
+
+    <script>
+        function updateStatus(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = isSuccess ? 'status success' : 'status error';
+        }
+
+        function testHealth() {
+            fetch('/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    updateStatus('healthStatus', `حالة الخادم: ${data.status}`, data.status === 'ok');
+                })
+                .catch(error => {
+                    updateStatus('healthStatus', `خطأ في الاتصال بالخادم: ${error.message}`, false);
+                });
+        }
+
+        function testDatabase() {
+            fetch('/test-connection')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.databaseConnected) {
+                        updateStatus('dbStatus', `قاعدة البيانات متصلة: ${data.clinicsCount} عيادة مسجلة`, true);
+                    } else {
+                        updateStatus('dbStatus', `خطأ في قاعدة البيانات: ${data.error}`, false);
+                    }
+                })
+                .catch(error => {
+                    updateStatus('dbStatus', `خطأ في الاتصال بقاعدة البيانات: ${error.message}`, false);
+                });
+        }
+
+        function testClinics() {
+            fetch('/api/clinics')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateStatus('clinicsStatus', `تم جلب ${data.count} عيادة بنجاح`, true);
+                    } else {
+                        updateStatus('clinicsStatus', `خطأ في جلب العيادات: ${data.error}`, false);
+                    }
+                })
+                .catch(error => {
+                    updateStatus('clinicsStatus', `خطأ في جلب العيادات: ${error.message}`, false);
+                });
+        }
+
+        function testAllConnections() {
+            updateStatus('healthStatus', 'جاري التحقق من حالة الخادم...', false);
+            updateStatus('dbStatus', 'جاري التحقق من قاعدة البيانات...', false);
+            updateStatus('clinicsStatus', 'جاري جلب بيانات العيادات...', false);
+
+            testHealth();
+            testDatabase();
+            testClinics();
+        }
+
+        // اختبار تلقائي عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', testAllConnections);
+    </script>
+</body>
+</html>

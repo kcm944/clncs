@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إرسال ملاحظة - دليل العيادات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* حالة الإنترنت */
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .connection-status.online {
+            background: #10b981;
+            color: white;
+        }
+
+        .connection-status.offline {
+            background: #ef4444;
+            color: white;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Header */
+        header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-back {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        header h1 {
+            font-size: 26px;
+            color: #667eea;
+            flex: 1;
+        }
+
+        /* Container */
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        .info-box h2 {
+            font-size: 22px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-box p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .info-box .highlight {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            border-right: 4px solid #f59e0b;
+            margin-top: 15px;
+        }
+
+        .info-box .highlight p {
+            font-size: 16px;
+            color: #92400e;
+            margin: 0;
+        }
+
+        /* Form Box */
+        .form-box {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .form-box h2 {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+        }
+
+        .form-group label .optional {
+            color: #999;
+            font-weight: normal;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            border: 3px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: inherit;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* Radio Group */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            background: #e8e8e8;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            margin-left: 12px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            font-size: 18px;
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .radio-option.selected {
+            background: #e0e7ff;
+            border-color: #667eea;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            padding: 20px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: white;
+            padding: 50px;
+            border-radius: 16px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-message .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .success-message h2 {
+            font-size: 28px;
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+
+        .success-message p {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .btn-return {
+            padding: 18px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            font-size: 18px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 20px;
+            }
+
+            .info-box h2,
+            .form-box h2 {
+                font-size: 20px;
+            }
+
+            .form-group label,
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+            }
+
+            .btn-submit {
+                font-size: 20px;
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- حالة الاتصال -->
+    <div class="connection-status online" id="connectionStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">متصل</span>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="btn-back">←</a>
+        <h1>✏️ إرسال ملاحظة أو تصحيح</h1>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Info Box -->
+        <div class="info-box">
+            <h2>📢 ساعدنا في تحسين الدليل</h2>
+            <p>إذا وجدت معلومة خاطئة أو غير محدثة، نرجو إخبارنا.</p>
+            <p>ملاحظتك ستساعد الآخرين في الوصول للمعلومات الصحيحة.</p>
+            
+            <div class="highlight">
+                <p>⚠️ <strong>ملاحظة مهمة:</strong> جميع الملاحظات تُراجع يدوياً من قبل فريق العمل قبل التحديث. قد يستغرق الأمر 24-48 ساعة.</p>
+            </div>
+        </div>
+
+        <!-- Form Box -->
+        <div class="form-box" id="formBox">
+            <h2>📝 أرسل ملاحظتك</h2>
+            
+            <form id="feedbackForm">
+                <!-- اسم العيادة -->
+                <div class="form-group">
+                    <label>
+                        🏥 اسم العيادة أو الطبيب
+                        <span class="optional">(اختياري)</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="clinicName" 
+                        placeholder="مثال: عيادة الدكتور محمد"
+                    >
+                </div>
+
+                <!-- نوع الملاحظة -->
+                <div class="form-group">
+                    <label>
+                        📋 نوع الملاحظة
+                        <span class="required">*</span>
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input 
+                                type="radio" 
+                                id="type_phone" 
+                                name="feedbackType" 
+                                value="phone"
+                                required
+                            >
+                            <label for="type_phone">📞 رقم هاتف خاطئ أو لا يعمل</label>
+                        </div>
+                        
+                        <div class="radio-option">
+                            <input 
+                                type="radio" 
+                                id="type_address" 
+                                name="feedbackType" 
+                                value="address"
+                            >
+                            <label for="type_address">📍 عنوان غير صحيح أو غير دقيق</label>
+                        </div>
+                        
+                        <div class="radio-option">
+                            <input 
+                                type="radio" 
+                                id="type_hours" 
+                                name="feedbackType" 
+                                value="hours"
+                            >
+                            <label for="type_hours">🕐 أوقات العمل غير صحيحة</label>
+                        </div>
+                        
+                        <div class="radio-option">
+                            <input 
+                                type="radio" 
+                                id="type_other" 
+                                name="feedbackType" 
+                                value="other"
+                            >
+                            <label for="type_other">📝 ملاحظة أخرى</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تفاصيل الملاحظة -->
+                <div class="form-group">
+                    <label>
+                        💬 تفاصيل الملاحظة
+                        <span class="required">*</span>
+                    </label>
+                    <textarea 
+                        id="message" 
+                        placeholder="اكتب التفاصيل هنا...&#10;&#10;مثال: رقم الهاتف المذكور لا يرد، الرقم الصحيح هو..."
+                        required
+                    ></textarea>
+                    <small style="color: #999; font-size: 14px; display: block; margin-top: 8px;">
+                        كلما كانت التفاصيل أكثر، كان التحديث أسرع
+                    </small>
+                </div>
+
+                <!-- وسيلة التواصل -->
+                <div class="form-group">
+                    <label>
+                        📧 وسيلة التواصل
+                        <span class="optional">(اختياري - للرد إذا لزم الأمر)</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="contact" 
+                        placeholder="رقم هاتف أو بريد إلكتروني"
+                    >
+                    <small style="color: #999; font-size: 14px; display: block; margin-top: 8px;">
+                        لن نشارك معلوماتك مع أي جهة
+                    </small>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>جاري الإرسال...</p>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    ✅ إرسال الملاحظة
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            <div class="icon">✅</div>
+            <h2>تم إرسال ملاحظتك بنجاح!</h2>
+            <p>شكراً لمساهمتك في تحسين الدليل</p>
+            <p>سيتم مراجعة ملاحظتك وتحديث المعلومات قريباً</p>
+            <a href="index.html" class="btn-return">العودة للرئيسية</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        // ═══════════════════════════════════════════════════════
+        // متابعة حالة الاتصال
+        // ═══════════════════════════════════════════════════════
+
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+            
+            if (navigator.onLine) {
+                status.className = 'connection-status online';
+                statusText.textContent = 'متصل';
+            } else {
+                status.className = 'connection-status offline';
+                statusText.textContent = 'غير متصل';
+                alert('⚠️ أنت غير متصل بالإنترنت. لا يمكن إرسال الملاحظة الآن.');
+            }
+        }
+
+        updateConnectionStatus();
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // ═══════════════════════════════════════════════════════
+        // تحديث تصميم Radio عند الاختيار
+        // ═══════════════════════════════════════════════════════
+
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // إرسال النموذج
+        // ═══════════════════════════════════════════════════════
+
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // التحقق من الاتصال
+            if (!navigator.onLine) {
+                alert('⚠️ لا يوجد اتصال بالإنترنت. الرجاء المحاولة لاحقاً.');
+                return;
+            }
+
+            // جمع البيانات
+            const clinicName = document.getElementById('clinicName').value.trim();
+            const feedbackType = document.querySelector('input[name="feedbackType"]:checked')?.value;
+            const message = document.getElementById('message').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+
+            // التحقق من البيانات
+            if (!feedbackType) {
+                alert('⚠️ الرجاء اختيار نوع الملاحظة');
+                return;
+            }
+
+            if (!message) {
+                alert('⚠️ الرجاء كتابة تفاصيل الملاحظة');
+                return;
+            }
+
+            // عرض Loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('submitBtn').disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/feedbacks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clinic_name: clinicName || null,
+                        feedback_type: feedbackType,
+                        message: message,
+                        contact: contact || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // إخفاء النموذج وعرض رسالة النجاح
+                    document.getElementById('formBox').style.display = 'none';
+                    document.getElementById('successMessage').classList.add('active');
+                } else {
+                    throw new Error(data.error || 'حدث خطأ في الإرسال');
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('❌ حدث خطأ في إرسال الملاحظة. الرجاء المحاولة لاحقاً.');
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('submitBtn').disabled = false;
+            }
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // تحميل بيانات العيادة من URL (إذا كان المستخدم قادم من صفحة عيادة)
+        // ═══════════════════════════════════════════════════════
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clinicName = urlParams.get('clinic');
+            
+            if (clinicName) {
+                document.getElementById('clinicName').value = decodeURIComponent(clinicName);
+            }
+        });
+    </script>
+</body>
+</html>

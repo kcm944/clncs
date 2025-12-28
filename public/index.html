@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>دليل العيادات الخاصة</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════
+           BASE STYLES - محسّن للتجربة المتنقلة
+           ═══════════════════════════════════════════════════════ */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #2d3748;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CONNECTION STATUS - محسّن للهواتف
+           ═══════════════════════════════════════════════════════ */
+        
+        .connection-status {
+            position: fixed;
+            top: 12px;
+            right: 12px; /* تم التغيير لليمين */
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .connection-status.online {
+            background: rgba(16, 185, 129, 0.95);
+            color: white;
+        }
+
+        .connection-status.offline {
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           HEADER - محسّن للتجربة المتنقلة
+           ═══════════════════════════════════════════════════════ */
+        
+        header {
+            background: white;
+            padding: 24px 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 100;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #667eea;
+            margin-bottom: 6px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* أيقونة الجرس للإشعارات - محسّنة للمس */
+        .notification-bell {
+            position: absolute;
+            left: 16px; /* تم التغيير لليسار */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            border: 2px solid white;
+        }
+
+        .notification-bell:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .notification-bell:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .notification-bell .bell-icon {
+            font-size: 20px;
+            color: white;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 10px;
+            border: 2px solid white;
+            min-width: 18px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           NEWS SECTION - متحرك أفقياً محسّن للتجربة
+           ═══════════════════════════════════════════════════════ */
+        
+        .news-section-container {
+            background: #fff;
+            border-bottom: 2px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+            position: relative;
+            z-index: 90;
+        }
+
+        .news-header {
+            padding: 10px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 700;
+            color: #667eea;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .news-scroll-wrapper {
+            position: relative;
+            overflow: hidden;
+            padding: 10px 0;
+            background: linear-gradient(to left, #ffffff, #f8f9fa, #ffffff);
+        }
+
+        /* الشريط المتحرك */
+        .news-ticker {
+            display: flex;
+            gap: 24px;
+            animation: scroll-news 35s linear infinite;
+            will-change: transform;
+            width: max-content;
+            padding: 0 16px;
+        }
+
+        .news-ticker:hover {
+            animation-play-state: paused;
+            cursor: pointer;
+        }
+
+        @keyframes scroll-news {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .news-item {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            padding: 8px 14px;
+            border-radius: 18px;
+            white-space: nowrap;
+            font-size: 12px;
+            color: #2d3748;
+            border: 1px solid #667eea30;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .news-item:active {
+            transform: scale(0.95);
+            background: linear-gradient(135deg, #667eea25, #764ba225);
+        }
+
+        .news-date {
+            font-size: 10px;
+            color: #6b7280;
+            background: rgba(255,255,255,0.7);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           MAIN CONTENT - محسّن للتجربة المتنقلة
+           ═══════════════════════════════════════════════════════ */
+        
+        .container {
+            flex: 1;
+            max-width: 600px;
+            width: 100%;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .main-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .main-btn {
+            background: white;
+            border: none;
+            padding: 28px 20px;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            min-height: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .main-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .main-btn:hover::before {
+            opacity: 1;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        }
+
+        .main-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-icon {
+            font-size: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        /* أزرار غير نشيطه */
+        .main-btn.disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            background: #e5e7eb;
+            color: #9ca3af;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            pointer-events: none;
+        }
+
+        .main-btn.disabled:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .main-btn.disabled::before {
+            display: none;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           NEW: COMING SOON BADGE FOR DISABLED BUTTONS
+           ═══════════════════════════════════════════════════════ */
+        
+        .main-btn.disabled .btn-coming-soon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #f59e0b;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 2;
+            letter-spacing: 0.3px;
+            font-family: inherit;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           FOOTER - محسّن
+           ═══════════════════════════════════════════════════════ */
+        
+        footer {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-align: center;
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           NOTIFICATIONS MODAL - محسّن للهواتف
+           ═══════════════════════════════════════════════════════ */
+        
+        .notifications-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .notifications-modal.active {
+            display: flex;
+        }
+
+        .notifications-content {
+            background: white;
+            width: 90%;
+            max-width: 420px;
+            border-radius: 20px;
+            padding: 0;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 75vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .notifications-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .close-modal {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .notification-list {
+            list-style: none;
+            padding: 8px;
+            margin: 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .notification-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #f8f9fa;
+            margin: 6px 4px;
+            border-radius: 12px;
+            border-right: 4px solid #667eea;
+            transition: transform 0.15s;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+            margin-bottom: 4px;
+        }
+
+        .notification-item:active {
+            transform: scale(0.98);
+            background: #e8eaf0;
+        }
+
+        .notification-meta {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           RESPONSIVE - تحسينات خاصة للهواتف والشاشات الكبيرة
+           ═══════════════════════════════════════════════════════ */
+        
+        /* ████████████████████████████████████████████████████████
+           تحسينات خاصة بالPhones (الحجم الأكبر أهمية)
+           ████████████████████████████████████████████████████████ */
+        
+        @media (max-width: 480px) {
+            html {
+                font-size: 15px;
+            }
+
+            body {
+                font-size: 1rem; /* 15px */
+            }
+
+            header {
+                padding: 20px 14px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            h1 {
+                font-size: 22px;
+                margin-bottom: 4px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            /* أيقونة الإشعارات - اليسار */
+            .notification-bell {
+                width: 38px;
+                height: 38px;
+                left: 12px;
+                top: 35px;
+            }
+
+            .notification-bell .bell-icon {
+                font-size: 18px;
+            }
+
+            /* أيقونة الاتصال - اليمين */
+            .connection-status {
+                top: 12px;
+                right: 12px;
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+
+            /* شريط الأخبار للهواتف - أبطأ وأكثر استقراراً */
+            .news-ticker {
+                animation-duration: 28s;
+                gap: 18px;
+                padding: 0 12px;
+            }
+
+            .news-item {
+                font-size: 11px;
+                padding: 6px 10px;
+                border-radius: 16px;
+            }
+
+            .news-date {
+                font-size: 9px;
+                padding: 2px 5px;
+            }
+
+            /* الأزرار للPhones - مساحة أكبر للمس */
+            .container {
+                margin: 20px auto;
+                padding: 0 14px;
+            }
+
+            .main-buttons {
+                gap: 14px;
+            }
+
+            .main-btn {
+                padding: 24px 16px;
+                font-size: 18px;
+                min-height: 68px;
+                border-radius: 14px;
+            }
+
+            .btn-icon {
+                font-size: 34px;
+            }
+
+            /* التنويه للأزرار غير النشطة - Phones */
+            .main-btn.disabled .btn-coming-soon {
+                top: 6px;
+                right: 6px;
+                font-size: 9px;
+                padding: 2px 6px;
+            }
+
+            /* نافذة الإشعارات لل iPhones - تملأ الشاشة */
+            .notifications-content {
+                width: 96%;
+                max-width: none;
+                border-radius: 20px 20px 0 0;
+                position: absolute;
+                bottom: 0;
+                max-height: 72vh;
+                animation: slideUpFromBottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            @keyframes slideUpFromBottom {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
+
+            .notifications-header {
+                padding: 16px;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .notification-item {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+
+            /* تحسينات إضافية للتجربة المتنقلة */
+            .news-section-container {
+                position: sticky;
+                top: 76px; /* height of header */
+                z-index: 90;
+            }
+
+            /* إبقاء footer في الأسفل دائماً */
+            footer {
+                position: sticky;
+                bottom: 0;
+                z-index: 50;
+            }
+        }
+
+        /* ████████████████████████████████████████████████████████
+           تحسينات خاصة بالشاشات الكبيرة (Tablet & Desktop)
+           ████████████████████████████████████████████████████████ */
+        
+        @media (min-width: 768px) {
+            html {
+                font-size: 17px;
+            }
+
+            .container {
+                max-width: 720px;
+                margin: 32px auto;
+            }
+
+            .news-ticker {
+                animation-duration: 45s; /* أبطأ على الشاشات الكبيرة */
+                gap: 28px;
+            }
+
+            .news-item {
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+
+            .main-btn {
+                font-size: 22px;
+                padding: 32px;
+            }
+
+            /* أيقونة الإشعارات - اليسار */
+            .notification-bell {
+                left: 30px;
+                width: 46px;
+                height: 46px;
+            }
+
+            .notification-bell .bell-icon {
+                font-size: 24px;
+            }
+
+            /* أيقونة الاتصال - اليمين */
+            .connection-status {
+                top: 20px;
+                right: 30px;
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+
+            /* التنويه للأزرار غير النشطة - الشاشات الكبيرة */
+            .main-btn.disabled .btn-coming-soon {
+                top: 10px;
+                right: 10px;
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+        }
+
+        /* ████████████████████████████████████████████████████████
+           تحسينات لكبار السن (يمنع الحركة)
+           ████████████████████████████████████████████████████████ */
+        
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+
+            .news-ticker {
+                animation: none !important;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+                padding: 8px;
+            }
+
+            .news-item {
+                animation: none;
+            }
+
+            .notification-bell,
+            .main-btn {
+                transform: none !important;
+            }
+        }
+
+        /* ████████████████████████████████████████████████████████
+           تحسينات إضافية للتجربة
+           ████████████████████████████████████████████████████████ */
+        
+        /* تحسين للمس على الأزرار */
+        .main-btn,
+        .notification-bell,
+        .news-item {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* تحسين للتمرير السريع */
+        .notification-list {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* تحسين للنصوص الضيقة */
+        .news-item span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* تحسين للوضوح */
+        .main-btn,
+        .news-item,
+        .notification-item {
+            backdrop-filter: blur(2px);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           NEW: CONNECTION ICON STYLE - أيقونة الاتصال الجديد
+           ═══════════════════════════════════════════════════════ */
+        
+        .connection-icon {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            width: 42px;
+            height: 42px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 3px solid;
+            z-index: 1001;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .connection-icon.online {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .connection-icon.offline {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .connection-icon:active {
+            transform: scale(0.95);
+        }
+
+        /* إخفاء النص القديم */
+        .connection-status {
+            display: none;
+        }
+
+        /* ████████████████████████████████████████████████████████
+           تحسينات خاصة بالهواتف - أيقونة الاتصال
+           ████████████████████████████████████████████████████████ */
+        
+        @media (max-width: 480px) {
+            .connection-icon {
+                width: 38px;
+                height: 38px;
+                right: 12px;
+                top: 18px;
+                font-size: 18px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .connection-icon {
+                right: 30px;
+                top: 20px;
+                width: 46px;
+                height: 46px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- أيقونة الاتصال (اليمين) -->
+    <div class="connection-icon online" id="connectionIcon" title="حالة الاتصال">
+        <span id="connectionIconText">✓</span>
+    </div>
+
+    <!-- الهيدر -->
+    <header>
+        <h1>🏥 دليل العيادات الخاصة</h1>
+        <p class="subtitle">للوصول السريع لمعلومات العيادات</p>
+        
+        <!-- أيقونة الإشعارات (اليسار) -->
+        <div class="notification-bell" id="notificationBell" aria-label="الإشعارات">
+            <span class="bell-icon">🔔</span>
+            <span class="notification-badge" id="notificationBadge">0</span>
+        </div>
+    </header>
+
+    <!-- قسم الأخبار المتحركة أفقياً -->
+    <div class="news-section-container">
+        <div class="news-header">📰 آخر الأخبار والتحديثات</div>
+        <div class="news-scroll-wrapper">
+            <div class="news-ticker" id="newsTicker">
+                <!-- سيتم ملؤها عبر JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="container">
+        <div class="main-buttons">
+            <a href="search.html" class="main-btn">
+                <span class="btn-icon">🔍</span>
+                البحث عن طبيب
+            </a>
+
+            <a href="clinics.html" class="main-btn">
+                <span class="btn-icon">📋</span>
+                عرض جميع العيادات
+            </a>
+
+            <a href="feedback.html" class="main-btn">
+                <span class="btn-icon">✏️</span>
+                إرسال ملاحظة
+            </a>
+
+            <!-- الزرين الجديدان غير النشيطين مع التنويه -->
+            <a href="#" class="main-btn disabled">
+                <span class="btn-coming-soon">قريباً</span>
+                <span class="btn-icon">💊</span>
+                الصيدليات المناوبة للشهر الحالي
+            </a>
+
+            <a href="#" class="main-btn disabled">
+                <span class="btn-coming-soon">قريباً</span>
+                <span class="btn-icon">🚗</span>
+                سيارات الأجرة المناوبة للشهر الحالي
+            </a>
+        </div>
+    </div>
+
+    <!-- الفوتر -->
+    <footer>
+        مشروع إنساني غير ربحي | لا إعلانات - لا اشتراكات
+    </footer>
+
+    <!-- نافذة الإشعارات -->
+    <div class="notifications-modal" id="notificationsModal" role="dialog" aria-modal="true">
+        <div class="notifications-content">
+            <div class="notifications-header">
+                <h3>🔔 الإشعارات</h3>
+                <button class="close-modal" id="closeModal" aria-label="إغلاق">×</button>
+            </div>
+            <ul class="notification-list" id="notificationList">
+                <!-- سيتم ملؤها عبر JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        // متابعة حالة الاتصال
+        // ═══════════════════════════════════════════════════════
+        
+        function updateConnectionStatus() {
+            const icon = document.getElementById('connectionIcon');
+            const iconText = document.getElementById('connectionIconText');
+            
+            if (navigator.onLine) {
+                icon.className = 'connection-icon online';
+                iconText.textContent = '✓';
+                icon.title = 'متصل بالإنترنت';
+            } else {
+                icon.className = 'connection-icon offline';
+                iconText.textContent = '✗';
+                icon.title = 'غير متصل بالإنترنت';
+            }
+        }
+
+        updateConnectionStatus();
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // ═══════════════════════════════════════════════════════
+        // Service Worker
+        // ═══════════════════════════════════════════════════════
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('✓ Service Worker registered'))
+                .catch(err => console.error('✗ Service Worker error:', err));
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // IndexedDB
+        // ═══════════════════════════════════════════════════════
+        
+        let db;
+        const dbName = 'ClinicsDB';
+        const dbVersion = 1;
+
+        function initDB() {
+            const request = indexedDB.open(dbName, dbVersion);
+
+            request.onerror = () => console.error('فشل فتح قاعدة البيانات');
+            
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                console.log('✓ قاعدة البيانات المحلية جاهزة');
+                checkForUpdates();
+            };
+
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                
+                if (!db.objectStoreNames.contains('specialties')) {
+                    db.createObjectStore('specialties', { keyPath: 'id' });
+                }
+                
+                if (!db.objectStoreNames.contains('clinics')) {
+                    db.createObjectStore('clinics', { keyPath: 'id' });
+                }
+                
+                if (!db.objectStoreNames.contains('sync')) {
+                    db.createObjectStore('sync', { keyPath: 'key' });
+                }
+            };
+        }
+
+        async function checkForUpdates() {
+            if (!navigator.onLine) {
+                console.log('غير متصل - استخدام البيانات المحلية');
+                return;
+            }
+
+            try {
+                const transaction = db.transaction(['sync'], 'readonly');
+                const store = transaction.objectStore('sync');
+                const localVersionRequest = store.get('version');
+
+                localVersionRequest.onsuccess = async () => {
+                    const localVersion = localVersionRequest.result?.value || 0;
+                    const response = await fetch(`/api/export/all?version=${localVersion}`);
+                    const data = await response.json();
+
+                    if (!data.upToDate) {
+                        console.log('تحديث جديد متاح...');
+                        await updateLocalData(data);
+                    } else {
+                        console.log('✓ البيانات محدثة');
+                    }
+                };
+            } catch (error) {
+                console.error('خطأ في التحقق من التحديثات:', error);
+            }
+        }
+
+        async function updateLocalData(data) {
+            const transaction = db.transaction(['specialties', 'clinics', 'sync'], 'readwrite');
+            const specialtiesStore = transaction.objectStore('specialties');
+            const clinicsStore = transaction.objectStore('clinics');
+            const syncStore = transaction.objectStore('sync');
+
+            data.data.specialties.forEach(s => specialtiesStore.put(s));
+            data.data.clinics.forEach(c => clinicsStore.put(c));
+            syncStore.put({ key: 'version', value: data.version });
+            syncStore.put({ key: 'lastSync', value: data.timestamp });
+
+            transaction.oncomplete = () => console.log('✓ تم تحديث البيانات المحلية');
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // قسم الأخبار + الإشعارات
+        // ═══════════════════════════════════════════════════════
+        
+        const newsData = [
+            { text: "تم تحديث قائمة التخصصات المتوفرة", date: "2024-01-15" },
+            { text: "جديد: خدمة الحجز عبر الإنترنت", date: "2024-01-10" },
+            { text: "تنبيه: تغيير في مواعيد العمل", date: "2024-01-05" },
+            { text: "إضافة عيادة جديدة في العاصمة", date: "2024-01-12" },
+            { text: "عروض خاصة: فحص مجاني للكبار", date: "2024-01-18" }
+        ];
+
+        const notificationsData = [
+            { text: "يوجد عيادة جديدة مضافه", date: "2024-01-15", type: "new" },
+            { text: "تم تغيير مواعيد العمل", date: "2024-01-14", type: "update" },
+            { text: "إضافة تخصص جديد (باطنة)", date: "2024-01-13", type: "new" },
+            { text: "تنبيه: يوم العمل سيكون مفتوح", date: "2024-01-12", type: "alert" }
+        ];
+
+        function loadNews() {
+            const newsTicker = document.getElementById('newsTicker');
+            if (!newsTicker) return;
+
+            const items = newsData.map(news => `
+                <div class="news-item">
+                    <span>${news.text}</span>
+                    <span class="news-date">${news.date}</span>
+                </div>
+            `).join('');
+
+            // ملأ الشريط مرتين للحصول على تأثير مت连续
+            newsTicker.innerHTML = items + items;
+        }
+
+        function loadNotifications() {
+            const notificationList = document.getElementById('notificationList');
+            const badge = document.getElementById('notificationBadge');
+            
+            if (!notificationList) return;
+
+            notificationList.innerHTML = notificationsData.map(notif => {
+                const icon = notif.type === 'new' ? '🆕' : notif.type === 'update' ? '🔄' : '⚠️';
+                return `
+                    <li class="notification-item">
+                        <div>${icon} ${notif.text}</div>
+                        <div class="notification-meta">
+                            <span>${notif.date}</span>
+                            <span>${notif.type === 'new' ? 'جديد' : notif.type === 'update' ? 'تحديث' : 'تنبيه'}</span>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+
+            if (notificationsData.length > 0) {
+                badge.textContent = notificationsData.length;
+                badge.style.display = 'block';
+            }
+        }
+
+        function toggleNotifications() {
+            const modal = document.getElementById('notificationsModal');
+            modal.classList.toggle('active');
+            
+            // منع التمرير في الخلفية
+            if (modal.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // تشغيل التطبيق
+        // ═══════════════════════════════════════════════════════
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initDB();
+            loadNews();
+            loadNotifications();
+            updateConnectionStatus();
+
+            // إضافة事件 للجرس
+            const bell = document.getElementById('notificationBell');
+            const closeModal = document.getElementById('closeModal');
+            const modal = document.getElementById('notificationsModal');
+
+            if (bell) {
+                bell.addEventListener('click', toggleNotifications);
+                // دعم اللمس الطويل
+                bell.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    toggleNotifications();
+                });
+            }
+
+            if (closeModal) {
+                closeModal.addEventListener('click', toggleNotifications);
+            }
+
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        toggleNotifications();
+                    }
+                });
+
+                // دعم زر الرجاع في الهاتف
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && modal.classList.contains('active')) {
+                        toggleNotifications();
+                    }
+                });
+            }
+
+            // إضافة دعم التمرير للجرس لفتح الإشعارات
+            if (bell) {
+                let startY = 0;
+                bell.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                });
+                
+                bell.addEventListener('touchmove', (e) => {
+                    const currentY = e.touches[0].clientY;
+                    if (startY - currentY > 50) {
+                        toggleNotifications();
+                    }
+                });
+            }
+
+            // إضافة دعم النقر المزدوج على أيقونة الاتصال للتحقق من الاتصال
+            const connectionIcon = document.getElementById('connectionIcon');
+            if (connectionIcon) {
+                connectionIcon.addEventListener('click', () => {
+                    updateConnectionStatus();
+                    // إظهار رسالة تأكيد
+                    const isOnline = navigator.onLine;
+                    const message = isOnline ? '✓ أنت متصل بالإنترنت' : '✗ أنت غير متصل';
+                    const icon = isOnline ? '🟢' : '🔴';
+                    
+                    // إنشاء رسالة مؤقتة
+                    const toast = document.createElement('div');
+                    toast.textContent = `${icon} ${message}`;
+                    toast.style.cssText = `
+                        position: fixed;
+                        top: 60px;
+                        right: 12px;
+                        background: ${isOnline ? '#10b981' : '#ef4444'};
+                        color: white;
+                        padding: 10px 16px;
+                        border-radius: 12px;
+                        font-weight: 600;
+                        z-index: 3000;
+                        animation: slideIn 0.3s;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => {
+                        toast.style.animation = 'fadeOut 0.3s';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 2000);
+                });
+            }
+
+            // إضافة دعم النقر على الأزرار غير النشطة
+            document.querySelectorAll('.main-btn.disabled').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // يمكن إضافة رسالة هنا إذا أردت
+                    console.log('هذا الخيار غير مفعل حالياً');
+                });
+            });
+        });
+
+        // تحديث كل 30 دقيقة
+        setInterval(checkForUpdates, 30 * 60 * 1000);
+    </script>
+</body>
+</html>

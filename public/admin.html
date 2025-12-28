@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لوحة التحكم - دليل العيادات الطبية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables & Reset */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-light: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+        /* Login Screen */
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; position: relative; overflow: hidden; }
+        .login-container::before { content: ''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: rotate 20s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .login-box { background: var(--card-bg); padding: clamp(28px, 5vw, 48px); border-radius: var(--radius); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); width: 100%; max-width: 440px; animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        @keyframes slideUp { from { transform: translateY(50px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        .login-header { text-align: center; margin-bottom: 32px; }
+        .login-header .logo { font-size: 48px; margin-bottom: 12px; display: block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .login-header h2 { color: var(--primary); font-size: clamp(24px, 4vw, 32px); font-weight: 700; margin-bottom: 8px; }
+        .login-header p { color: var(--text-light); font-size: 14px; }
+        .form-group { margin-bottom: 24px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .form-group label i { color: var(--primary); width: 16px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; font-family: inherit; transition: var(--transition); background: var(--card-bg); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+        .btn { padding: 14px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; user-select: none; position: relative; overflow: hidden; }
+        .btn::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.3); transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
+        .btn:active::before { width: 300px; height: 300px; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; width: 100%; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3); }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); width: 100%; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* Dashboard */
+        .dashboard { display: none; min-height: 100vh; padding-bottom: 80px; background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%); }
+        .dashboard.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .dashboard-header { background: var(--card-bg); padding: 16px clamp(16px, 4vw, 30px); box-shadow: var(--shadow-lg); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 3px solid var(--primary); }
+        .dashboard-header .logo-section { display: flex; align-items: center; gap: 12px; }
+        .dashboard-header .logo-icon { font-size: 28px; color: var(--primary); animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        .dashboard-header h1 { color: var(--text); font-size: clamp(18px, 4vw, 24px); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .user-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .admin-badge { background: var(--primary); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3); }
+        .admin-badge.super { background: linear-gradient(45deg, #f59e0b, #ef4444); box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3); }
+        .notification-dot { background: var(--danger); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; animation: pulse 2s infinite; }
+        .dashboard-content { padding: clamp(16px, 4vw, 30px); max-width: 1400px; margin: 0 auto; }
+        .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; position: relative; overflow: hidden; transition: var(--transition); border: 1px solid var(--border); }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--success)); }
+        .stat-card .icon { font-size: 24px; margin-bottom: 8px; opacity: 0.8; }
+        .stat-card h3 { color: var(--text-light); font-size: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .stat-card .number { font-size: clamp(26px, 5vw, 36px); font-weight: 800; color: var(--primary); line-height: 1.2; }
+        .tabs-container { position: sticky; top: 78px; background: var(--bg); z-index: 90; padding: 10px 0; margin: 0 -16px; backdrop-filter: blur(10px); }
+        .tabs { display: flex; gap: 8px; padding: 0 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; border-bottom: 2px solid var(--border); }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab { padding: 14px 24px; background: none; border: none; font-size: 14px; font-weight: 600; color: var(--text-light); cursor: pointer; border-bottom: 3px solid transparent; transition: var(--transition); white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 8px; border-radius: 8px 8px 0 0; }
+        .tab:hover { background: rgba(37, 99, 235, 0.05); color: var(--primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(37, 99, 235, 0.08); }
+        .tab .badge { background: var(--danger); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; animation: pulse 2s infinite; }
+        .tab-content { display: none; animation: slideIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .table-container { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); transition: var(--transition); }
+        .table-container:hover { box-shadow: var(--shadow-lg); }
+        .table-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 2px solid var(--border); flex-wrap: wrap; gap: 14px; background: #f9fafb; }
+        .table-header h2 { font-size: clamp(16px, 3vw, 20px); color: var(--text); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .table-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .search-box { position: relative; display: flex; align-items: center; }
+        .search-box input { padding: 10px 36px 10px 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 14px; width: 220px; transition: var(--transition); }
+        .search-box input:focus { outline: none; border-color: var(--primary); width: 260px; }
+        .search-box i { position: absolute; left: 12px; color: var(--text-light); pointer-events: none; }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th, td { padding: 16px 20px; text-align: right; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+        th { background: #f9fafb; font-weight: 700; color: var(--text); position: sticky; top: 0; z-index: 10; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:hover { background: #f9fafb; }
+        tr:last-child td { border-bottom: none; }
+
+        /* Badges */
+        .badge { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 14px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; gap: 6px; white-space: nowrap; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-reviewing { background: #dbeafe; color: #1e40af; }
+        .badge-applied { background: #d1fae5; color: #065f46; }
+        .badge-rejected { background: #fee2e2; color: #991b1b; }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-inactive { background: #fee2e2; color: #991b1b; }
+        .badge-urgent { background: #fecaca; color: #991b1b; font-weight: 700; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+
+        /* Buttons in table */
+        .btn-edit, .btn-delete, .btn-action, .btn-approve, .btn-reject { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: var(--transition); min-height: 36px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .btn-edit { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3); }
+        .btn-edit:hover { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
+        .btn-delete { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3); }
+        .btn-delete:hover { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); }
+        .btn-action { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); }
+        .btn-action:hover { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        .btn-approve { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .btn-reject { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+        .btn-view { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; }
+        .btn-sm { padding: 8px 14px; font-size: 13px; min-height: 36px; }
+        .btn-lg { padding: 16px 28px; font-size: 18px; min-height: 56px; }
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3); }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card-bg); padding: clamp(20px, 4vw, 32px); border-radius: var(--radius); width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid var(--border); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 14px; border-bottom: 3px solid var(--primary); }
+        .modal-header h2 { font-size: clamp(18px, 3vw, 24px); color: var(--text); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .btn-close { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-light); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: var(--transition); }
+        .btn-close:hover { background: #f3f4f6; color: var(--danger); transform: rotate(90deg); }
+        .btn-save { width: 100%; margin-top: 24px; font-size: 16px; font-weight: 700; }
+        .modal-body .form-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+        @media (min-width: 600px) { .modal-body .form-grid { grid-template-columns: 1fr 1fr; } .modal-body .form-grid .full-width { grid-column: 1 / -1; } }
+
+        /* Toast */
+        .toast { position: fixed; top: 20px; right: 20px; background: var(--card-bg); padding: 16px 20px; border-radius: var(--radius); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); z-index: 2000; display: none; align-items: center; gap: 12px; min-width: 280px; max-width: 400px; animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); backdrop-filter: blur(10px); border: 1px solid var(--border); }
+        .toast.show { display: flex; }
+        .toast.success { border-right: 4px solid var(--success); }
+        .toast.error { border-right: 4px solid var(--danger); }
+        .toast.warning { border-right: 4px solid var(--warning); }
+        .toast i { font-size: 20px; }
+        .toast.success i { color: var(--success); }
+        .toast.error i { color: var(--danger); }
+        .toast.warning i { color: var(--warning); }
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 700; margin-bottom: 2px; font-size: 14px; }
+        .toast-message { font-size: 13px; color: var(--text-light); }
+        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Loading Overlay */
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); z-index: 3000; display: none; justify-content: center; align-items: center; flex-direction: column; gap: 16px; }
+        .loading-overlay.hidden { display: none; }
+        .loading-overlay:not(.hidden) { display: flex; }
+        .loading-overlay .spinner { width: 48px; height: 48px; border-width: 6px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-overlay p { color: var(--primary); font-weight: 600; font-size: 16px; }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 12px; }
+        .mt-3 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 12px; }
+        .mb-3 { margin-bottom: 16px; }
+        .text-danger { color: var(--danger); }
+        .text-success { color: var(--success); }
+        .text-warning { color: var(--warning); }
+        .text-info { color: var(--info); }
+        .text-primary { color: var(--primary); }
+        .fw-bold { font-weight: 700; }
+        .flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .w-full { width: 100%; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); background: #f9fafb; border-radius: var(--radius); margin: 12px; }
+        .empty-state h3 { margin-bottom: 8px; color: var(--text); font-size: 18px; }
+        .empty-state i { font-size: 48px; opacity: 0.3; margin-bottom: 12px; }
+        .permission-denied { text-align: center; padding: 60px 20px; background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); margin: 20px 0; border: 2px dashed var(--border); }
+        .permission-denied h2 { color: var(--danger); margin-bottom: 12px; font-size: 24px; }
+        .permission-denied i { font-size: 48px; color: var(--danger); margin-bottom: 16px; opacity: 0.5; }
+        .debug-info { background: #fef3c7; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 12px; font-family: monospace; display: none; }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 2px solid var(--border);
+            padding: 8px 0;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.05);
+            z-index: 99;
+        }
+        .mobile-nav.show { display: flex; justify-content: space-around; }
+        .mobile-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            font-size: 10px;
+            color: var(--text-light);
+            text-decoration: none;
+            gap: 4px;
+            flex: 1;
+            text-align: center;
+        }
+        .mobile-nav .nav-item span {
+            font-size: 18px;
+            display: block;
+        }
+        .mobile-nav .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .dashboard-content { padding-bottom: 80px; }
+            .tabs-container { top: 60px; }
+            .table-wrapper { min-width: 100%; }
+            th, td { padding: 12px 16px; }
+            .search-box input { width: 180px; }
+            .search-box input:focus { width: 200px; }
+            .stats-cards { grid-template-columns: repeat(2, 1fr); }
+            .mobile-nav { display: flex; }
+            .user-info button span { display: none; }
+            .user-info button { padding: 8px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>جاري التحميل...</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <div class="toast-content">
+            <div class="toast-title">نجاح</div>
+            <div class="toast-message">تمت العملية بنجاح</div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <div class="login-header">
+                <span class="logo">🏥</span>
+                <h2>لوحة التحكم</h2>
+                <p>دليل العيادات الطبية الشامل</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> اسم المستخدم</label>
+                    <input type="text" id="username" required autocomplete="username" placeholder="أدخل اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> كلمة المرور</label>
+                    <input type="password" id="password" required autocomplete="current-password" placeholder="أدخل كلمة المرور">
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <span id="loginBtnText">دخول</span>
+                    <span class="hidden" id="loginSpinner">⏳</span>
+                </button>
+            </form>
+            <div class="text-center mt-3" style="font-size: 12px; color: #666;">
+                <i class="fas fa-info-circle"></i>
+                الأولوية: admin / admin123
+            </div>
+            <div class="text-center mt-2" style="font-size: 12px;">
+                <span style="color: var(--text-light);">مشكلة في الاتصال؟</span> 
+                <button type="button" id="testConnectionBtn" style="background: none; border: none; color: var(--primary); cursor: pointer; text-decoration: underline;">اختبار الاتصال</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard hidden" id="dashboard">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="logo-section">
+                <span class="logo-icon">🏥</span>
+                <h1>لوحة التحكم</h1>
+            </div>
+            <div class="user-info">
+                <span id="adminName">المشرف</span>
+                <span id="adminBadge" class="admin-badge"></span>
+                <span id="unreadBadge" class="notification-dot hidden"></span>
+                <button class="btn btn-danger btn-sm" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> <span>خروج</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <!-- Debug Info -->
+            <div class="debug-info" id="debugInfo"></div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards" id="statsContainer"></div>
+
+            <!-- Navigation Tabs -->
+            <div class="tabs-container">
+                <div class="tabs" id="tabsContainer"></div>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="tabContents"></div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav"></div>
+    </div>
+
+    <!-- Generic Modal -->
+    <div class="modal hidden" id="genericModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">العنوان</h2>
+                <button class="btn-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ STATE MANAGEMENT & CONFIGURATION                                            │
+        //  └──────────────────────────────────────────────────────────────────────────────┘
+
+        const API_URL = '/api';
+        const state = {
+            token: null,
+            admin: null,
+            currentTab: 'dashboard',
+            unreadCount: 0,
+            permissions: {
+                super_admin: ['manage_admins', 'clinics_full', 'feedback_full', 'news_full', 'notifications_full', 'export'],
+                editor: ['clinics_full', 'feedback_review', 'news_view', 'notifications_view'],
+                viewer: ['clinics_view', 'feedback_view', 'news_view', 'notifications_view']
+            }
+        };
+
+        let searchTimeout = null;
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ UTILITY FUNCTIONS                                                           │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        function showLoading(show = true) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) overlay.classList.remove('hidden');
+            else overlay.classList.add('hidden');
+        }
+
+        function showToast(message, type = 'success', title = 'نجاح') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('i');
+            const titleEl = toast.querySelector('.toast-title');
+            const messageEl = toast.querySelector('.toast-message');
+
+            toast.className = 'toast';
+
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle';
+                toast.style.borderRight = '4px solid var(--success)';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle';
+                toast.style.borderRight = '4px solid var(--danger)';
+            } else if (type === 'warning') {
+                icon.className = 'fas fa-exclamation-triangle';
+                toast.style.borderRight = '4px solid var(--warning)';
+            } else {
+                icon.className = 'fas fa-info-circle';
+                toast.style.borderRight = '4px solid var(--info)';
+            }
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('active');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            const dashboard = document.getElementById('dashboard');
+            dashboard.classList.remove('hidden');
+            dashboard.classList.add('active');
+            setupDashboard();
+        }
+
+        function hasPermission(permission) {
+            if (!state.admin) return false;
+            const rolePerms = state.permissions[state.admin.role] || [];
+            return rolePerms.includes(permission);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar', { 
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        function updateDebugInfo() {
+            const debugEl = document.getElementById('debugInfo');
+            if (!debugEl) return;
+            
+            if (state.admin) {
+                debugEl.style.display = 'block';
+                debugEl.innerHTML = `
+                    <strong>🔍 Debug Info:</strong><br>
+                    Role: ${state.admin.role}<br>
+                    Username: ${state.admin.username}<br>
+                    Full Name: ${state.admin.full_name}<br>
+                    Permissions: ${state.permissions[state.admin.role].join(', ')}<br>
+                    Token: ${state.token ? '✅ Loaded' : '❌ Missing'}
+                `;
+            } else {
+                debugEl.style.display = 'none';
+            }
+        }
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ API CALLS                                                                   │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        async function apiCall(endpoint, method = 'GET', body = null, showLoadingOverlay = false) {
+            if (showLoadingOverlay) showLoading(true);
+
+            const headers = {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            };
+
+            const config = {
+                method,
+                headers,
+                body: body ? JSON.stringify(body) : undefined
+            };
+
+            try {
+                console.log(`API Call: ${method} ${endpoint}`);
+                const response = await fetch(`${API_URL}${endpoint}`, config);
+                
+                // Handle text response (for exports)
+                const contentType = response.headers.get('content-type');
+                let data;
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    data = await response.text();
+                }
+
+                if (!response.ok) {
+                    const errorMsg = typeof data === 'string' ? data : (data.error || `API Error: ${response.status}`);
+                    throw new Error(errorMsg);
+                }
+
+                console.log('API Success:', data);
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            } finally {
+                if (showLoadingOverlay) showLoading(false);
+            }
+        }
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ AUTHENTICATION                                                              │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const spinner = document.getElementById('loginSpinner');
+            const btnText = document.getElementById('loginBtnText');
+            const btn = document.querySelector('#loginForm button');
+
+            if (!username || !password) {
+                showToast('يجب إدخال اسم المستخدم وكلمة المرور', 'warning', 'حقول مطلوبة');
+                return;
+            }
+
+            spinner.classList.remove('hidden');
+            btnText.textContent = 'جاري التحقق...';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            try {
+                const response = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    state.token = data.token;
+                    state.admin = data.admin;
+                    localStorage.setItem('authToken', state.token);
+                    localStorage.setItem('adminData', JSON.stringify(data.admin));
+
+                    console.log('Login data:', data);
+                    showToast(`مرحباً ${data.admin.full_name}`, 'success', 'مرحباً بك');
+                    showDashboard();
+                } else {
+                    showToast(data.error || 'خطأ في تسجيل الدخول', 'error', 'فشل الدخول');
+                }
+            } catch (error) {
+                console.error('Login Error:', error);
+                showToast('لا يمكن الاتصال بالسيرفر. تأكد من تشغيل الخادم.', 'error', 'خطأ في الاتصال');
+            } finally {
+                spinner.classList.add('hidden');
+                btnText.textContent = 'دخول';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        });
+
+        // Test Connection Button
+        document.getElementById('testConnectionBtn').addEventListener('click', async () => {
+            try {
+                showLoading(true);
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    showToast(`الاتصال يعمل ✅\nDB: ${data.database}`, 'success', 'تم التوصيل');
+                } else {
+                    showToast('استجابة غير متوقعة من السيرفر', 'warning', 'تحذير');
+                }
+            } catch (error) {
+                showToast('لا يمكن الاتصال بالسيرفر. تأكد من تشغيل الخادم على المنفذ 3000', 'error', 'خطأ في الاتصال');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        function logout() {
+            state.token = null;
+            state.admin = null;
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('adminData');
+            showToast('تم تسجيل الخروج', 'success', 'وداعاً');
+            showLogin();
+        }
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ INITIALIZATION                                                              │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('authToken');
+            const savedAdmin = localStorage.getItem('adminData');
+
+            console.log('Initialization - Saved data:', { savedToken: !!savedToken, savedAdmin: !!savedAdmin });
+
+            if (savedToken && savedAdmin) {
+                state.token = savedToken;
+                state.admin = JSON.parse(savedAdmin);
+                console.log('Restored admin:', state.admin);
+                showDashboard();
+            } else {
+                showLogin();
+            }
+
+            // Handle mobile nav visibility on resize
+            window.addEventListener('resize', () => {
+                const mobileNav = document.getElementById('mobileNav');
+                if (mobileNav && state.admin) {
+                    if (window.innerWidth <= 768) {
+                        mobileNav.classList.remove('hidden');
+                        mobileNav.classList.add('show');
+                    } else {
+                        mobileNav.classList.add('hidden');
+                        mobileNav.classList.remove('show');
+                    }
+                }
+            });
+
+            // Close modal on outside click
+            const modal = document.getElementById('genericModal');
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        });
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ DASHBOARD SETUP                                                             │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        async function setupDashboard() {
+            console.log('Setting up dashboard for:', state.admin);
+            updateDebugInfo();
+
+            // Update header
+            document.getElementById('adminName').textContent = state.admin.full_name;
+            const badge = document.getElementById('adminBadge');
+            const roleText = state.admin.role === 'super_admin' ? 'مشرف خاص' : 
+                            state.admin.role === 'editor' ? 'محرر' : 'مطلع';
+            badge.textContent = roleText;
+            badge.className = `admin-badge ${state.admin.role === 'super_admin' ? 'super' : ''}`;
+
+            // Build navigation
+            buildNavigation();
+
+            // Load stats
+            await loadStats();
+
+            // Show dashboard tab
+            showTab('dashboard');
+        }
+
+        function buildNavigation() {
+            const tabs = [
+                { id: 'dashboard', icon: 'fa-chart-line', label: 'الرئيسية', required: 'clinics_view' },
+                { id: 'clinics', icon: 'fa-hospital', label: 'العيادات', required: 'clinics_full' },
+                { id: 'feedbacks', icon: 'fa-comments', label: 'الملاحظات', required: 'feedback_view' },
+                { id: 'news', icon: 'fa-newspaper', label: 'الأخبار', required: 'news_view' },
+                { id: 'notifications', icon: 'fa-bell', label: 'الإشعارات', required: 'notifications_view' },
+                { id: 'admins', icon: 'fa-users-cog', label: 'المشرفين', required: 'manage_admins', superOnly: true },
+                { id: 'settings', icon: 'fa-cog', label: 'الإعدادات', required: 'export' }
+            ];
+
+            const tabsContainer = document.getElementById('tabsContainer');
+            const mobileNav = document.getElementById('mobileNav');
+            tabsContainer.innerHTML = '';
+            mobileNav.innerHTML = '';
+
+            tabs.forEach(tab => {
+                if (tab.superOnly && state.admin.role !== 'super_admin') return;
+                if (!hasPermission(tab.required)) return;
+
+                // Desktop Tab
+                const tabBtn = document.createElement('button');
+                tabBtn.className = 'tab';
+                tabBtn.id = `tab-${tab.id}`;
+                tabBtn.innerHTML = `<i class="fas ${tab.icon}"></i> ${tab.label}`;
+                tabBtn.onclick = () => showTab(tab.id);
+                tabsContainer.appendChild(tabBtn);
+
+                // Mobile Nav Item
+                const navItem = document.createElement('a');
+                navItem.href = '#';
+                navItem.className = 'nav-item';
+                navItem.id = `nav-${tab.id}`;
+                navItem.innerHTML = `<span class="fas ${tab.icon}"></span>${tab.label}`;
+                navItem.onclick = (e) => { e.preventDefault(); showTab(tab.id); };
+                mobileNav.appendChild(navItem);
+            });
+
+            if (window.innerWidth <= 768) {
+                mobileNav.classList.remove('hidden');
+                mobileNav.classList.add('show');
+            }
+        }
+
+        async function showTab(tabId) {
+            state.currentTab = tabId;
+            console.log(`Showing tab: ${tabId}`);
+
+            // Update active states
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+
+            const tabBtn = document.getElementById(`tab-${tabId}`);
+            const navBtn = document.getElementById(`nav-${tabId}`);
+            if (tabBtn) tabBtn.classList.add('active');
+            if (navBtn) navBtn.classList.add('active');
+
+            // Load content
+            const container = document.getElementById('tabContents');
+            container.innerHTML = '<div class="text-center" style="padding: 40px;"><div class="spinner"></div></div>';
+
+            try {
+                let content = '';
+                switch(tabId) {
+                    case 'dashboard': content = await renderDashboard(); break;
+                    case 'clinics': content = await renderClinics(); break;
+                    case 'feedbacks': content = await renderFeedbacks(); break;
+                    case 'news': content = await renderNews(); break;
+                    case 'notifications': content = await renderNotifications(); break;
+                    case 'admins': content = await renderAdmins(); break;
+                    case 'settings': content = await renderSettings(); break;
+                }
+                container.innerHTML = content;
+                initializeTabListeners(tabId);
+            } catch (error) {
+                console.error('Error loading tab:', error);
+                container.innerHTML = `
+                    <div class="permission-denied">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>⚠️ خطأ في التحميل</h2>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 10px; font-size: 12px;">خطأ في جلب البيانات من الخادم</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadStats() {
+            console.log('Loading stats...');
+            try {
+                const stats = await apiCall('/admin/stats');
+                console.log('Stats received:', stats);
+                
+                const container = document.getElementById('statsContainer');
+                
+                if (!stats || !stats.stats) {
+                    container.innerHTML = `
+                        <div class="permission-denied">
+                            <h2>❌ بيانات غير صالحة</h2>
+                            <p>لم يتم استلام الإحصائيات بشكل صحيح</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const s = stats.stats;
+                container.innerHTML = `
+                    <div class="stat-card">
+                        <div class="icon">🏥</div>
+                        <h3>العيادات</h3>
+                        <div class="number">${s.clinics || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">🎯</div>
+                        <h3>التخصصات</h3>
+                        <div class="number">${s.specialties || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">💬</div>
+                        <h3>ملاحظات جديدة</h3>
+                        <div class="number">${s.pendingFeedback || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">📰</div>
+                        <h3>أخبار نشطة</h3>
+                        <div class="number">${s.activeNews || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">🔔</div>
+                        <h3>إشعارات غير مقروءة</h3>
+                        <div class="number">${s.unreadNotifications || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">🕒</div>
+                        <h3>آخر تحديث</h3>
+                        <div class="number" style="font-size: 14px;">${formatDate(s.lastUpdate)}</div>
+                    </div>
+                `;
+
+                state.unreadCount = s.unreadNotifications || 0;
+                updateUnreadBadge();
+            } catch (error) {
+                console.error('Stats error:', error);
+                showToast('فشل جلب الإحصائيات: ' + error.message, 'error', 'خطأ');
+                
+                // Show error state
+                const container = document.getElementById('statsContainer');
+                container.innerHTML = `
+                    <div class="permission-denied">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>❌ مشكلة في جلب البيانات</h2>
+                        <p>${error.message}</p>
+                        <button class="btn btn-outline" onclick="loadStats()" style="margin-top: 12px;">
+                            <i class="fas fa-sync"></i> إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function updateUnreadBadge() {
+            const badge = document.getElementById('unreadBadge');
+            if (state.unreadCount > 0) {
+                badge.textContent = state.unreadCount > 99 ? '99+' : state.unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            const notifTab = document.getElementById('tab-notifications');
+            const notifNav = document.getElementById('nav-notifications');
+            if (notifTab && state.unreadCount > 0) {
+                notifTab.innerHTML = `<i class="fas fa-bell"></i> الإشعارات <span class="badge">${state.unreadCount}</span>`;
+            }
+            if (notifNav && state.unreadCount > 0) {
+                notifNav.innerHTML = `<span class="fas fa-bell"></span> الإشعارات <span class="badge">${state.unreadCount}</span>`;
+            }
+        }
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ RENDER FUNCTIONS                                                            │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        async function renderDashboard() {
+            return `
+                <div class="table-container" style="padding: 24px;">
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">👋</div>
+                        <h2 style="margin-bottom: 8px; color: var(--primary);">مرحباً ${state.admin.full_name}</h2>
+                        <p style="color: var(--text-light); margin-bottom: 24px;">
+                            ${state.admin.role === 'super_admin'
+                                ? 'أنت المشرف الرئيسي، لديك تحكم كامل في جميع بيانات النظام'
+                                : state.admin.role === 'editor'
+                                ? 'يمكنك إضافة وتعديل البيانات والملاحظات'
+                                : 'يمكنك عرض البيانات فقط'}
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                        ${hasPermission('clinics_full') ? `<button class="btn btn-primary btn-lg" onclick="showTab('clinics')"><i class="fas fa-hospital"></i> إدارة العيادات</button>` : ''}
+                        ${hasPermission('feedback_view') ? `<button class="btn btn-outline btn-lg" onclick="showTab('feedbacks')"><i class="fas fa-comments"></i> الملاحظات</button>` : ''}
+                        ${hasPermission('manage_admins') && state.admin.role === 'super_admin' ? `<button class="btn btn-warning btn-lg" onclick="showTab('admins')"><i class="fas fa-users-cog"></i> المشرفين</button>` : ''}
+                        <button class="btn btn-success btn-lg" onclick="loadStats()"><i class="fas fa-sync"></i> تحديث البيانات</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function renderClinics() {
+            if (!hasPermission('clinics_view')) return permissionDenied();
+
+            const data = await apiCall('/admin/clinics');
+            const canEdit = hasPermission('clinics_full');
+
+            let html = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2><i class="fas fa-hospital"></i> العيادات</h2>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="clinicSearch" placeholder="بحث عن عيادة..." onkeyup="handleClinicSearch(this.value)">
+                            </div>
+                            ${canEdit ? `<button class="btn btn-success btn-sm" onclick="openClinicModal()"><i class="fas fa-plus"></i> إضافة</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="clinicsTable">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>التخصص</th>
+                                    <th>الهاتف</th>
+                                    <th>العنوان</th>
+                                    <th>التحديث</th>
+                                    ${canEdit ? '<th>الإجراءات</th>' : ''}
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            if (data.clinics.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="${canEdit ? '6' : '5'}">
+                            <div class="empty-state">
+                                <i class="fas fa-hospital-alt"></i>
+                                <h3>لا توجد عيادات</h3>
+                                <p>لاضافة عيادة جديدة، اضغط على زر "إضافة"</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                data.clinics.forEach(c => {
+                    html += `
+                        <tr data-search="${c.name.toLowerCase()} ${c.specialty_name.toLowerCase()} ${c.phone} ${c.address.toLowerCase()}">
+                            <td data-label="الاسم" class="fw-bold">${c.name}</td>
+                            <td data-label="التخصص">
+                                ${c.specialty_icon || '🏥'} ${c.specialty_name || '-'}
+                            </td>
+                            <td data-label="الهاتف"><a href="tel:${c.phone}" style="color: var(--primary);">${c.phone}</a></td>
+                            <td data-label="العنوان">${c.address || '-'}</td>
+                            <td data-label="التحديث">${formatDate(c.last_updated)}</td>
+                            ${canEdit ? `
+                                <td data-label="الإجراءات">
+                                    <button class="btn-edit btn-sm" onclick="editClinic(${c.id})"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete btn-sm" onclick="deleteClinic(${c.id})"><i class="fas fa-trash"></i></button>
+                                </td>
+                            ` : ''}
+                        </tr>
+                    `;
+                });
+            }
+
+            html += '</tbody></table></div></div>';
+            return html;
+        }
+
+        async function renderFeedbacks() {
+            if (!hasPermission('feedback_view')) return permissionDenied();
+
+            const data = await apiCall('/admin/feedbacks');
+            const canReview = hasPermission('feedback_full') || hasPermission('feedback_review');
+
+            let html = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2><i class="fas fa-comments"></i> الملاحظات</h2>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="feedbackSearch" placeholder="بحث..." onkeyup="handleFeedbackSearch(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="feedbacksTable">
+                            <thead>
+                                <tr>
+                                    <th>العيادة</th>
+                                    <th>النوع</th>
+                                    <th>الرسالة</th>
+                                    <th>الحالة</th>
+                                    <th>التاريخ</th>
+                                    ${canReview ? '<th>الإجراءات</th>' : ''}
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            if (data.feedbacks.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="${canReview ? '6' : '5'}">
+                            <div class="empty-state">
+                                <i class="fas fa-comment-slash"></i>
+                                <h3>لا توجد ملاحظات</h3>
+                                <p>جميع الملاحظات قد تمت مراجعتها</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                data.feedbacks.forEach(f => {
+                    const badgeClass = `badge-${f.status}`;
+                    const badgeText = f.status === 'pending' ? 'معلق' : 
+                                    f.status === 'reviewing' ? 'قيد المراجعة' :
+                                    f.status === 'applied' ? 'تم الترحيل' : 'مرفوض';
+
+                    html += `
+                        <tr data-search="${(f.clinic_name || '').toLowerCase()} ${f.feedback_type.toLowerCase()} ${f.message.toLowerCase()}">
+                            <td data-label="العيادة" class="fw-bold">${f.clinic_name || '-'}</td>
+                            <td data-label="النوع">${getFeedbackTypeIcon(f.feedback_type)} ${f.feedback_type}</td>
+                            <td data-label="الرسالة">${f.message.substring(0, 60)}${f.message.length > 60 ? '...' : ''}</td>
+                            <td data-label="الحالة"><span class="badge ${badgeClass}">${badgeText}</span></td>
+                            <td data-label="التاريخ">${formatDate(f.created_at)}</td>
+                            ${canReview ? `
+                                <td data-label="الإجراءات">
+                                    <button class="btn-action btn-sm" onclick="reviewFeedback(${f.id})"><i class="fas fa-eye"></i> مراجعة</button>
+                                </td>
+                            ` : ''}
+                        </tr>
+                    `;
+                });
+            }
+
+            html += '</tbody></table></div></div>';
+            return html;
+        }
+
+        async function renderNews() {
+            if (!hasPermission('news_view')) return permissionDenied();
+
+            const data = await apiCall('/news');
+            const canManage = hasPermission('news_full');
+
+            let html = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2><i class="fas fa-newspaper"></i> الأخبار</h2>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="newsSearch" placeholder="بحث..." onkeyup="handleNewsSearch(this.value)">
+                            </div>
+                            ${canManage ? `<button class="btn btn-success btn-sm" onclick="openNewsModal()"><i class="fas fa-plus"></i> إضافة</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="newsTable">
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>الكاتب</th>
+                                    <th>الحالة</th>
+                                    <th>التاريخ</th>
+                                    ${canManage ? '<th>الإجراءات</th>' : ''}
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            if (data.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="${canManage ? '5' : '4'}">
+                            <div class="empty-state">
+                                <i class="fas fa-newspaper"></i>
+                                <h3>لا توجد أخبار</h3>
+                                <p>لاضافة خبر جديد، اضغط على زر "إضافة"</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                data.forEach(n => {
+                    html += `
+                        <tr data-search="${n.title.toLowerCase()} ${n.author.toLowerCase()}">
+                            <td data-label="العنوان" class="fw-bold">${n.title}</td>
+                            <td data-label="الكاتب">${n.author || '-'}</td>
+                            <td data-label="الحالة">
+                                <span class="badge ${n.is_active ? 'badge-active' : 'badge-inactive'}">
+                                    ${n.is_active ? '<i class="fas fa-check"></i>نشط' : '<i class="fas fa-times"></i>معطل'}
+                                </span>
+                            </td>
+                            <td data-label="التاريخ">${formatDate(n.published_date)}</td>
+                            ${canManage ? `
+                                <td data-label="الإجراءات">
+                                    <button class="btn-edit btn-sm" onclick="toggleNews(${n.id})">
+                                        ${n.is_active ? '<i class="fas fa-toggle-on"></i>' : '<i class="fas fa-toggle-off"></i>'}
+                                    </button>
+                                    <button class="btn-delete btn-sm" onclick="deleteNews(${n.id})"><i class="fas fa-trash"></i></button>
+                                </td>
+                            ` : ''}
+                        </tr>
+                    `;
+                });
+            }
+
+            html += '</tbody></table></div></div>';
+            return html;
+        }
+
+        async function renderNotifications() {
+            if (!hasPermission('notifications_view')) return permissionDenied();
+
+            const data = await apiCall('/notifications');
+            const canManage = hasPermission('notifications_full');
+
+            let html = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2><i class="fas fa-bell"></i> الإشعارات</h2>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="notifSearch" placeholder="بحث..." onkeyup="handleNotificationSearch(this.value)">
+                            </div>
+                            ${canManage ? `<button class="btn btn-success btn-sm" onclick="openNotificationModal()"><i class="fas fa-plus"></i> إضافة</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="notificationsTable">
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>النوع</th>
+                                    <th>الحالة</th>
+                                    <th>التاريخ</th>
+                                    ${canManage ? '<th>الإجراءات</th>' : ''}
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            if (data.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="${canManage ? '5' : '4'}">
+                            <div class="empty-state">
+                                <i class="fas fa-bell-slash"></i>
+                                <h3>لا توجد إشعارات</h3>
+                                <p>لاضافة إشعار جديد، اضغط على زر "إضافة"</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                data.forEach(n => {
+                    const typeClass = n.type === 'urgent' ? 'badge-urgent' : n.type === 'warning' ? 'badge-warning' : 'badge-info';
+                    const typeIcon = n.type === 'urgent' ? '🔥' : n.type === 'warning' ? '⚠️' : 'ℹ️';
+
+                    html += `
+                        <tr data-search="${n.title.toLowerCase()} ${n.message.toLowerCase()}">
+                            <td data-label="العنوان" class="fw-bold">${n.title}</td>
+                            <td data-label="النوع">
+                                <span class="badge ${typeClass}">${typeIcon} ${n.type}</span>
+                            </td>
+                            <td data-label="الحالة">
+                                <span class="badge ${n.is_read ? 'badge-active' : 'badge-inactive'}">
+                                    ${n.is_read ? '<i class="fas fa-check"></i>مقروء' : '<i class="fas fa-circle"></i>غير مقروء'}
+                                </span>
+                            </td>
+                            <td data-label="التاريخ">${formatDate(n.created_at)}</td>
+                            ${canManage ? `
+                                <td data-label="الإجراءات">
+                                    ${!n.is_read ? `<button class="btn-action btn-sm" onclick="markRead(${n.id})"><i class="fas fa-check"></i></button>` : ''}
+                                    <button class="btn-delete btn-sm" onclick="deleteNotification(${n.id})"><i class="fas fa-trash"></i></button>
+                                </td>
+                            ` : ''}
+                        </tr>
+                    `;
+                });
+            }
+
+            html += '</tbody></table></div></div>';
+            return html;
+        }
+
+        async function renderAdmins() {
+            if (state.admin.role !== 'super_admin') return permissionDenied();
+
+            const admins = await apiCall('/admin/admins');
+
+            let html = `
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2><i class="fas fa-users-cog"></i> المشرفين</h2>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="adminSearch" placeholder="بحث..." onkeyup="handleAdminSearch(this.value)">
+                            </div>
+                            <button class="btn btn-success btn-sm" onclick="openAdminModal()"><i class="fas fa-user-plus"></i> إضافة</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="adminsTable">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>المستخدم</th>
+                                    <th>الدور</th>
+                                    <th>الحالة</th>
+                                    <th>آخر دخول</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            if (admins.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="fas fa-user-friends"></i>
+                                <h3>لا يوجد مشرفين</h3>
+                                <p>لاضافة مشرف جديد، اضغط على زر "إضافة"</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                admins.forEach(a => {
+                    const isCurrent = a.id === state.admin.id;
+                    const roleClass = a.role === 'super_admin' ? 'badge-warning' : a.role === 'editor' ? 'badge-info' : 'badge-pending';
+                    const roleText = a.role === 'super_admin' ? 'مشرف خاص' : a.role === 'editor' ? 'محرر' : 'مطلع';
+
+                    html += `
+                        <tr data-search="${a.full_name.toLowerCase()} ${a.username.toLowerCase()}">
+                            <td data-label="الاسم" class="fw-bold">
+                                ${a.full_name}
+                                ${isCurrent ? '<span class="badge badge-info" style="font-size: 10px;">أنت</span>' : ''}
+                            </td>
+                            <td data-label="المستخدم">${a.username}</td>
+                            <td data-label="الدور">
+                                <span class="badge ${roleClass}">${roleText}</span>
+                            </td>
+                            <td data-label="الحالة">
+                                <span class="badge ${a.is_active ? 'badge-active' : 'badge-inactive'}">
+                                    ${a.is_active ? 'نشط' : 'معطل'}
+                                </span>
+                            </td>
+                            <td data-label="آخر دخول">${formatDate(a.last_login)}</td>
+                            <td data-label="الإجراءات">
+                                <button class="btn-edit btn-sm" onclick="editAdmin(${a.id})"><i class="fas fa-edit"></i></button>
+                                ${!isCurrent ? `<button class="btn-delete btn-sm" onclick="deleteAdmin(${a.id})"><i class="fas fa-trash"></i></button>` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += '</tbody></table></div></div>';
+            return html;
+        }
+
+        async function renderSettings() {
+            if (!hasPermission('export')) return permissionDenied();
+
+            return `
+                <div class="table-container" style="padding: 24px;">
+                    <h2 style="margin-bottom: 24px;"><i class="fas fa-cog"></i> الإعدادات</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        <div style="background: #f9fafb; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border);">
+                            <div style="font-size: 32px; margin-bottom: 12px;">📦</div>
+                            <h3 style="margin-bottom: 8px;">تصدير البيانات</h3>
+                            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 16px;">
+                                قم بتنزيل نسخة احتياطية من جميع البيانات (العيادات، الأخبار، الإشعارات، الملاحظات، المشرفين).
+                            </p>
+                            <button class="btn btn-primary w-full" onclick="exportData()">
+                                <i class="fas fa-download"></i> تحميل JSON
+                            </button>
+                        </div>
+
+                        <div style="background: #f9fafb; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border);">
+                            <div style="font-size: 32px; margin-bottom: 12px;">🔒</div>
+                            <h3 style="margin-bottom: 8px;">معلومات الحساب</h3>
+                            <div class="detail-grid" style="margin-top: 12px;">
+                                <div class="detail-item">
+                                    <div class="detail-label">المستخدم</div>
+                                    <div class="detail-value">${state.admin.username}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">الدور</div>
+                                    <div class="detail-value">${state.admin.role === 'super_admin' ? 'مشرف خاص' : state.admin.role === 'editor' ? 'محرر' : 'مطلع'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">الاسم</div>
+                                    <div class="detail-value">${state.admin.full_name}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">ID</div>
+                                    <div class="detail-value">#${state.admin.id}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f9fafb; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border);">
+                            <div style="font-size: 32px; margin-bottom: 12px;">ℹ️</div>
+                            <h3 style="margin-bottom: 8px;">حول النظام</h3>
+                            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 12px;">
+                                <strong>الإصدار:</strong> 3.8<br>
+                                <strong>ال开发:</strong> MiMo AI<br>
+                                <strong>قاعدة البيانات:</strong> SQLite<br>
+                                <strong>آخر تحديث:</strong> ${formatDateTime(new Date().toISOString())}
+                            </p>
+                            <button class="btn btn-outline w-full" onclick="showTab('dashboard')">
+                                <i class="fas fa-arrow-left"></i> العودة للرئيسية
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function permissionDenied() {
+            return `
+                <div class="permission-denied">
+                    <i class="fas fa-lock"></i>
+                    <h2>🚫 صلاحية مطلوبة</h2>
+                    <p>لا تملك الصلاحية الكافية للوصول إلى هذه الصفحة</p>
+                    <p style="margin-top: 12px; font-size: 14px; color: var(--text-light);">
+                        الدور الحالي: ${state.admin.role === 'super_admin' ? 'مشرف خاص' : state.admin.role === 'editor' ? 'محرر' : 'مطلع'}
+                    </p>
+                </div>
+            `;
+        }
+
+        function getFeedbackTypeIcon(type) {
+            const icons = {
+                'phone': '📞',
+                'address': '📍',
+                'hours': '⏰',
+                'other': '💬'
+            };
+            return icons[type] || '💬';
+        }
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ SEARCH FUNCTIONS                                                            │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        function handleClinicSearch(value) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const table = document.getElementById('clinicsTable');
+                if (!table) return;
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                const searchTerm = value.toLowerCase().trim();
+                for (let row of rows) {
+                    if (row.getAttribute('data-search')) {
+                        row.style.display = row.getAttribute('data-search').includes(searchTerm) ? '' : 'none';
+                    }
+                }
+            }, 300);
+        }
+
+        function handleFeedbackSearch(value) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const table = document.getElementById('feedbacksTable');
+                if (!table) return;
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                const searchTerm = value.toLowerCase().trim();
+                for (let row of rows) {
+                    if (row.getAttribute('data-search')) {
+                        row.style.display = row.getAttribute('data-search').includes(searchTerm) ? '' : 'none';
+                    }
+                }
+            }, 300);
+        }
+
+        function handleNewsSearch(value) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const table = document.getElementById('newsTable');
+                if (!table) return;
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                const searchTerm = value.toLowerCase().trim();
+                for (let row of rows) {
+                    if (row.getAttribute('data-search')) {
+                        row.style.display = row.getAttribute('data-search').includes(searchTerm) ? '' : 'none';
+                    }
+                }
+            }, 300);
+        }
+
+        function handleNotificationSearch(value) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const table = document.getElementById('notificationsTable');
+                if (!table) return;
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                const searchTerm = value.toLowerCase().trim();
+                for (let row of rows) {
+                    if (row.getAttribute('data-search')) {
+                        row.style.display = row.getAttribute('data-search').includes(searchTerm) ? '' : 'none';
+                    }
+                }
+            }, 300);
+        }
+
+        function handleAdminSearch(value) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const table = document.getElementById('adminsTable');
+                if (!table) return;
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                const searchTerm = value.toLowerCase().trim();
+                for (let row of rows) {
+                    if (row.getAttribute('data-search')) {
+                        row.style.display = row.getAttribute('data-search').includes(searchTerm) ? '' : 'none';
+                    }
+                }
+            }, 300);
+        }
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ MODAL FUNCTIONS                                                             │
+        //  └──────────────────────────────────────────────────────────────────────────────┘
+
+        function showModal(title, contentHTML) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = contentHTML;
+            document.getElementById('genericModal').classList.remove('hidden');
+            document.getElementById('genericModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('genericModal').classList.add('hidden');
+            document.getElementById('genericModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        //  ┌──────────────────────────────────────────────────────────────────────────────┐
+        //  │ CRUD FUNCTIONS                                                              │
+        //   └──────────────────────────────────────────────────────────────────────────────┘
+
+        async function openClinicModal(clinicId = null) {
+            const isEdit = !!clinicId;
+            let clinicData = {};
+
+            if (isEdit) {
+                const data = await apiCall('/admin/clinics');
+                clinicData = data.clinics.find(c => c.id === clinicId) || {};
+            }
+
+            const specialties = await apiCall('/specialties');
+
+            const formHTML = `
+                <form id="clinicForm" onsubmit="saveClinic(event, ${clinicId})">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-hospital"></i> اسم العيادة *</label>
+                            <input type="text" id="clinicName" value="${clinicData.name || ''}" required placeholder="أدخل اسم العيادة">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-stethoscope"></i> التخصص *</label>
+                            <select id="clinicSpecialty" required>
+                                <option value="">اختر التخصص...</option>
+                                ${specialties.map(s => `<option value="${s.id}" ${clinicData.specialty_id === s.id ? 'selected' : ''}>${s.icon || '🏥'} ${s.name_ar}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> رقم الهاتف *</label>
+                            <input type="tel" id="clinicPhone" value="${clinicData.phone || ''}" required placeholder="05XXXXXXXX">
+                        </div>
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-map-marker-alt"></i> العنوان</label>
+                            <input type="text" id="clinicAddress" value="${clinicData.address || ''}" placeholder="العنوان الكامل">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i> أوقات العمل</label>
+                            <input type="text" id="clinicHours" value="${clinicData.working_hours || ''}" placeholder="مثال: 9:00 - 18:00">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> الأيام</label>
+                            <input type="text" id="clinicDays" value="${clinicData.working_days || ''}" placeholder="أيام العمل">
+                        </div>
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-info-circle"></i> ملاحظات</label>
+                            <textarea id="clinicNotes" rows="3" placeholder="أي ملاحظات إضافية...">${clinicData.notes || ''}</textarea>
+                        </div>
+                    </div>
+                    ${isEdit ? `<div class="checkbox-group"><input type="checkbox" id="clinicActive" ${clinicData.is_active ? 'checked' : ''}><label for="clinicActive">تفعيل العيادة</label></div>` : ''}
+                    <button type="submit" class="btn btn-success btn-save">
+                        <i class="fas fa-save"></i> حفظ العيادة
+                    </button>
+                </form>
+            `;
+
+            showModal(isEdit ? '✏️ تعديل العيادة' : '➕ إضافة عيادة جديدة', formHTML);
+        }
+
+        async function saveClinic(e, clinicId) {
+            e.preventDefault();
+
+            const data = {
+                name: document.getElementById('clinicName').value,
+                specialty_id: document.getElementById('clinicSpecialty').value,
+                phone: document.getElementById('clinicPhone').value,
+                address: document.getElementById('clinicAddress').value,
+                working_hours: document.getElementById('clinicHours').value,
+                working_days: document.getElementById('clinicDays').value,
+                notes: document.getElementById('clinicNotes').value,
+                is_active: clinicId ? (document.getElementById('clinicActive')?.checked ? 1 : 0) : 1
+            };
+
+            try {
+                showLoading(true);
+                const method = clinicId ? 'PUT' : 'POST';
+                const endpoint = clinicId ? `/admin/clinics/${clinicId}` : '/admin/clinics';
+                const result = await apiCall(endpoint, method, data);
+
+                closeModal();
+                showToast(clinicId ? 'تم تحديث العيادة بنجاح' : 'تمت إضافة العيادة بنجاح', 'success');
+
+                await loadStats();
+                showTab('clinics');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function editClinic(id) { openClinicModal(id); }
+
+        async function deleteClinic(id) {
+            if (!confirm('⚠️ هل أنت متأكد من حذف هذه العيادة؟\nلا يمكن التراجع عن هذا الإجراء.')) return;
+
+            try {
+                showLoading(true);
+                await apiCall(`/admin/clinics/${id}`, 'DELETE');
+                showToast('تم حذف العيادة بنجاح', 'success');
+                await loadStats();
+                showTab('clinics');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function reviewFeedback(id) {
+            const f = await apiCall(`/admin/feedbacks/${id}`);
+            const html = `
+                <div style="line-height: 1.8;">
+                    <div class="section-title"><i class="fas fa-info-circle"></i> بيانات الملاحظة</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">العيادة</div>
+                            <div class="detail-value">${f.clinic_name || 'غير محدد'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">النوع</div>
+                            <div class="detail-value">${getFeedbackTypeIcon(f.feedback_type)} ${f.feedback_type}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">التاريخ</div>
+                            <div class="detail-value">${formatDateTime(f.created_at)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">الحالة</div>
+                            <div class="detail-value">
+                                <span class="badge badge-${f.status}">${f.status}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title"><i class="fas fa-comment"></i> المحتوى</div>
+                    <div style="background: #f9fafb; padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px;">
+                        ${f.message}
+                    </div>
+
+                    ${f.contact ? `<div style="margin-bottom: 12px;"><strong>بيانات التواصل:</strong> ${f.contact}</div>` : ''}
+
+                    <div class="section-title"><i class="fas fa-reply"></i> الرد</div>
+                    <textarea id="adminNotes" rows="3" placeholder="اكتب ملاحظاتك هنا..." style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px;"></textarea>
+
+                    <div class="action-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px;">
+                        <button class="btn-approve btn-sm" onclick="updateFeedback(${id}, 'applied', document.getElementById('adminNotes').value)">
+                            <i class="fas fa-check"></i> تم الترحيل
+                        </button>
+                        <button class="btn-reject btn-sm" onclick="updateFeedback(${id}, 'rejected', document.getElementById('adminNotes').value)">
+                            <i class="fas fa-times"></i> رفض
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="updateFeedback(${id}, 'reviewing', document.getElementById('adminNotes').value)">
+                            <i class="fas fa-sync"></i> قيد المراجعة
+                        </button>
+                    </div>
+                </div>
+            `;
+            showModal('👁️ مراجعة الملاحظة', html);
+        }
+
+        async function updateFeedback(id, status, adminNotes = '') {
+            try {
+                showLoading(true);
+                await apiCall(`/admin/feedbacks/${id}`, 'PUT', { status, admin_notes: adminNotes });
+                showToast('تم تحديث الحالة بنجاح', 'success');
+                closeModal();
+                await loadStats();
+                showTab('feedbacks');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function openNewsModal() {
+            const html = `
+                <form id="newsForm" onsubmit="saveNews(event)">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-heading"></i> عنوان الخبر *</label>
+                            <input type="text" id="newsTitle" required placeholder="أدخل عنوان الخبر">
+                        </div>
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-align-right"></i> محتوى الخبر *</label>
+                            <textarea id="newsContent" rows="5" required placeholder="اكتب محتوى الخبر هنا..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user-edit"></i> الكاتب</label>
+                            <input type="text" id="newsAuthor" value="${state.admin.full_name}" placeholder="الكاتب">
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="newsActive" checked>
+                                <label for="newsActive">نشر الخبر الآن</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-save">
+                        <i class="fas fa-newspaper"></i> حفظ الخبر
+                    </button>
+                </form>
+            `;
+            showModal('➕ إضافة خبر جديد', html);
+        }
+
+        async function saveNews(e) {
+            e.preventDefault();
+
+            const data = {
+                title: document.getElementById('newsTitle').value,
+                content: document.getElementById('newsContent').value,
+                author: document.getElementById('newsAuthor').value,
+                is_active: document.getElementById('newsActive').checked ? 1 : 0
+            };
+
+            try {
+                showLoading(true);
+                await apiCall('/admin/news', 'POST', data);
+                showToast('تمت إضافة الخبر بنجاح', 'success');
+                closeModal();
+                await loadStats();
+                showTab('news');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function toggleNews(id) {
+            try {
+                showLoading(true);
+                await apiCall(`/admin/news/${id}/toggle`, 'PATCH');
+                showToast('تم تحديث حالة الخبر', 'success');
+                showTab('news');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function deleteNews(id) {
+            if (!confirm('⚠️ هل أنت متأكد من حذف الخبر؟')) return;
+
+            try {
+                showLoading(true);
+                await apiCall(`/admin/news/${id}`, 'DELETE');
+                showToast('تم حذف الخبر بنجاح', 'success');
+                await loadStats();
+                showTab('news');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function openNotificationModal() {
+            const html = `
+                <form id="notifForm" onsubmit="saveNotification(event)">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-heading"></i> عنوان الإشعار *</label>
+                            <input type="text" id="notifTitle" required placeholder="أدخل عنوان الإشعار">
+                        </div>
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-align-left"></i> محتوى الإشعار</label>
+                            <textarea id="notifMessage" rows="3" placeholder="اكتب رسالة الإشعار..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> النوع</label>
+                            <select id="notifType">
+                                <option value="info">ℹ️ معلوماتي</option>
+                                <option value="urgent">🔥 عاجل</option>
+                                <option value="warning">⚠️ تحذير</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> رقم المستخدم</label>
+                            <input type="number" id="notifUser" placeholder="اتركه فارغاً للكل">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-save">
+                        <i class="fas fa-bell"></i> حفظ الإشعار
+                    </button>
+                </form>
+            `;
+            showModal('➕ إضافة إشعار', html);
+        }
+
+        async function saveNotification(e) {
+            e.preventDefault();
+
+            const data = {
+                title: document.getElementById('notifTitle').value,
+                message: document.getElementById('notifMessage').value,
+                type: document.getElementById('notifType').value,
+                user_id: document.getElementById('notifUser').value || null
+            };
+
+            try {
+                showLoading(true);
+                await apiCall('/admin/notifications', 'POST', data);
+                showToast('تمت إضافة الإشعار بنجاح', 'success');
+                closeModal();
+                await loadStats();
+                showTab('notifications');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function markRead(id) {
+            try {
+                showLoading(true);
+                await apiCall(`/admin/notifications/${id}/mark-read`, 'PATCH');
+                showToast('تم تحديد الإشعار كمقروء', 'success');
+                state.unreadCount = Math.max(0, state.unreadCount - 1);
+                updateUnreadBadge();
+                showTab('notifications');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function deleteNotification(id) {
+            if (!confirm('⚠️ هل أنت متأكد من حذف الإشعار؟')) return;
+
+            try {
+                showLoading(true);
+                await apiCall(`/admin/notifications/${id}`, 'DELETE');
+                showToast('تم حذف الإشعار بنجاح', 'success');
+                await loadStats();
+                showTab('notifications');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function openAdminModal(adminId = null) {
+            const isEdit = !!adminId;
+            let adminData = {};
+
+            if (isEdit) {
+                const admins = await apiCall('/admin/admins');
+                adminData = admins.find(a => a.id === adminId) || {};
+            }
+
+            const html = `
+                <form id="adminForm" onsubmit="saveAdmin(event, ${adminId})">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> اسم المستخدم *</label>
+                            <input type="text" id="adminUsername" value="${adminData.username || ''}" required ${isEdit ? 'disabled' : ''} placeholder="أدخل اسم المستخدم">
+                        </div>
+                        ${!isEdit ? `
+                            <div class="form-group">
+                                <label><i class="fas fa-lock"></i> كلمة المرور *</label>
+                                <input type="password" id="adminPassword" required placeholder="أدخل كلمة المرور">
+                            </div>
+                        ` : ''}
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-user-circle"></i> الاسم الكامل *</label>
+                            <input type="text" id="adminFullname" value="${adminData.full_name || ''}" required placeholder="الاسم الكامل">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user-shield"></i> الدور *</label>
+                            <select id="adminRole" required>
+                                <option value="editor" ${adminData.role === 'editor' ? 'selected' : ''}>محرر (جميع الصلاحيات)</option>
+                                <option value="viewer" ${adminData.role === 'viewer' ? 'selected' : ''}>مطلع (مشاهدة فقط)</option>
+                                ${state.admin.role === 'super_admin' ? `<option value="super_admin" ${adminData.role === 'super_admin' ? 'selected' : ''}>مشرف خاص</option>` : ''}
+                            </select>
+                        </div>
+                        ${isEdit ? `
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="adminActive" ${adminData.is_active ? 'checked' : ''}>
+                                    <label for="adminActive">نشط</label>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <button type="submit" class="btn btn-success btn-save">
+                        <i class="fas fa-save"></i> حفظ المشرف
+                    </button>
+                </form>
+            `;
+
+            showModal(isEdit ? '✏️ تعديل المشرف' : '➕ إضافة مشرف جديد', html);
+        }
+
+        async function saveAdmin(e, adminId) {
+            e.preventDefault();
+
+            const data = {
+                username: document.getElementById('adminUsername')?.value,
+                password: document.getElementById('adminPassword')?.value,
+                full_name: document.getElementById('adminFullname').value,
+                role: document.getElementById('adminRole').value,
+                is_active: document.getElementById('adminActive')?.checked ? 1 : 0
+            };
+
+            Object.keys(data).forEach(key => data[key] === undefined && delete data[key]);
+
+            try {
+                showLoading(true);
+                const method = adminId ? 'PUT' : 'POST';
+                const endpoint = adminId ? `/admin/admins/${adminId}` : '/admin/admins';
+                await apiCall(endpoint, method, data);
+
+                showToast(adminId ? 'تم تحديث المشرف بنجاح' : 'تمت إضافة المشرف بنجاح', 'success');
+                closeModal();
+                showTab('admins');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function deleteAdmin(id) {
+            if (!confirm('⚠️ هل أنت متأكد من حذف هذا المشرف؟')) return;
+
+            try {
+                showLoading(true);
+                await apiCall(`/admin/admins/${id}`, 'DELETE');
+                showToast('تم حذف المشرف بنجاح', 'success');
+                showTab('admins');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function exportData() {
+            try {
+                showLoading(true);
+                const data = await apiCall('/admin/export');
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `clinics_backup_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('تم تحميل النسخة الاحتياطية بنجاح', 'success', 'تم التحميل');
+            } catch (error) {
+                showToast(error.message, 'error', 'خطأ');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Helper function to initialize tab listeners
+        function initializeTabListeners(tabId) {
+            // Add any specific event listeners for the current tab
+            // This is a placeholder for future extensions
+        }
+
+        // Helper for date formatting with time
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('ar', { 
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+</html>

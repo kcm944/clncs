@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>جميع العيادات - دليل العيادات</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════
+           BASE STYLES - محسّن للتجربة المتنقلة
+           ═══════════════════════════════════════════════════════ */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-top: 60px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CONNECTION STATUS - محسّن للهواتف
+           ═══════════════════════════════════════════════════════ */
+        
+        .connection-status {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 1001;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .connection-status.online {
+            background: rgba(16, 185, 129, 0.95);
+            color: white;
+        }
+
+        .connection-status.offline {
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           HEADER - محسّن للتجربة المتنقلة
+           ═══════════════════════════════════════════════════════ */
+        
+        header {
+            background: white;
+            padding: 14px 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-back:active {
+            transform: scale(0.95);
+        }
+
+        .btn-back:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        header h1 {
+            font-size: 20px;
+            color: #667eea;
+            font-weight: 800;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CONTAINER - محسّن للتجربة المتنقلة
+           ═══════════════════════════════════════════════════════ */
+        
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           FILTER SECTION - محسّن للمس
+           ═══════════════════════════════════════════════════════ */
+        
+        .filter-section {
+            background: white;
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            margin-bottom: 16px;
+        }
+
+        .filter-section h2 {
+            font-size: 16px;
+            color: #667eea;
+            margin-bottom: 14px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .specialty-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .specialty-btn {
+            padding: 12px 10px;
+            background: #f8fafc;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            min-height: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            letter-spacing: 0.2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .specialty-btn:active {
+            transform: scale(0.96);
+            background: #e8eaf0;
+        }
+
+        .specialty-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .specialty-btn .icon {
+            font-size: 18px;
+        }
+
+        .btn-clear-filter {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+            display: none;
+            transition: all 0.2s;
+            min-height: 44px;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-clear-filter.active {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        .btn-clear-filter:active {
+            transform: scale(0.98);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           STATS - محسّن للتجربة
+           ═══════════════════════════════════════════════════════ */
+        
+        .stats {
+            background: white;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stats h3 {
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .stats-count {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            min-width: 32px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           LOADING - محسّن للتجربة
+           ═══════════════════════════════════════════════════════ */
+        
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            margin: 16px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CLINICS GRID - محسّن للتجربة المتنقلة
+           ═══════════════════════════════════════════════════════ */
+        
+        .clinics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            animation: fadeIn 0.4s;
+        }
+
+        .clinic-card {
+            background: white;
+            padding: 16px;
+            border-radius: 14px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .clinic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .clinic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+
+        .clinic-card:hover::before {
+            opacity: 1;
+        }
+
+        .clinic-card:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .clinic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .clinic-card h3 {
+            font-size: 16px;
+            color: #2d3748;
+            flex: 1;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .specialty-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+            flex-shrink: 0;
+        }
+
+        .clinic-info {
+            font-size: 13px;
+            color: #4a5568;
+            margin: 8px 0;
+            display: flex;
+            align-items: start;
+            gap: 8px;
+            line-height: 1.5;
+        }
+
+        .clinic-info .icon {
+            font-size: 14px;
+            min-width: 18px;
+            text-align: center;
+            margin-top: 1px;
+        }
+
+        .clinic-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-call,
+        .btn-details {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-call {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-call:active {
+            transform: scale(0.96);
+            box-shadow: 0 1px 4px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-details {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-details:active {
+            transform: scale(0.96);
+            box-shadow: 0 1px 4px rgba(102, 126, 234, 0.25);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           EMPTY STATE - محسّن للتجربة
+           ═══════════════════════════════════════════════════════ */
+        
+        .empty-state {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 16px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.4s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .empty-state.active {
+            display: block;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            filter: grayscale(1);
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           RESPONSIVE - تحسينات خاصة للهواتف والشاشات الكبيرة
+           ═══════════════════════════════════════════════════════ */
+        
+        @media (max-width: 768px) {
+            html {
+                font-size: 15px;
+            }
+
+            body {
+                padding-top: 56px;
+            }
+
+            header {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            header h1 {
+                font-size: 18px;
+            }
+
+            .btn-back {
+                min-width: 40px;
+                min-height: 40px;
+                padding: 8px 14px;
+                font-size: 18px;
+            }
+
+            .container {
+                margin: 16px auto;
+                padding: 0 12px;
+            }
+
+            .filter-section {
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+
+            .filter-section h2 {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+
+            .specialty-filters {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 8px;
+            }
+
+            .specialty-btn {
+                padding: 10px 8px;
+                font-size: 12px;
+                min-height: 44px;
+                border-radius: 10px;
+            }
+
+            .specialty-btn .icon {
+                font-size: 16px;
+            }
+
+            .btn-clear-filter {
+                font-size: 14px;
+                padding: 10px;
+                min-height: 42px;
+                margin-top: 10px;
+            }
+
+            .stats {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .stats h3 {
+                font-size: 13px;
+            }
+
+            .stats-count {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+
+            .clinics-grid {
+                gap: 10px;
+            }
+
+            .clinic-card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .clinic-header {
+                margin-bottom: 10px;
+            }
+
+            .clinic-card h3 {
+                font-size: 14px;
+            }
+
+            .specialty-badge {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
+
+            .clinic-info {
+                font-size: 12px;
+                margin: 6px 0;
+            }
+
+            .clinic-info .icon {
+                font-size: 12px;
+                min-width: 16px;
+            }
+
+            .clinic-actions {
+                gap: 6px;
+                margin-top: 10px;
+            }
+
+            .btn-call,
+            .btn-details {
+                padding: 8px;
+                font-size: 12px;
+                min-height: 38px;
+                border-radius: 8px;
+            }
+
+            .loading {
+                padding: 30px 16px;
+            }
+
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border-width: 3px;
+            }
+
+            .empty-state {
+                padding: 24px 16px;
+            }
+
+            .empty-state .icon {
+                font-size: 40px;
+            }
+
+            .empty-state h3 {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .specialty-filters {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            .clinics-grid {
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            }
+        }
+
+        @media (min-width: 1025px) {
+            html {
+                font-size: 17px;
+            }
+
+            body {
+                padding-top: 70px;
+            }
+
+            header {
+                padding: 16px 20px;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+
+            .container {
+                margin: 24px auto;
+                max-width: 1200px;
+            }
+
+            .filter-section {
+                padding: 22px;
+            }
+
+            .filter-section h2 {
+                font-size: 18px;
+            }
+
+            .specialty-filters {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 12px;
+            }
+
+            .specialty-btn {
+                padding: 16px 12px;
+                font-size: 15px;
+                border-radius: 14px;
+            }
+
+            .clinics-grid {
+                grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+                gap: 18px;
+            }
+
+            .clinic-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .clinic-card h3 {
+                font-size: 18px;
+            }
+
+            .specialty-badge {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+
+            .clinic-info {
+                font-size: 14px;
+            }
+
+            .btn-call,
+            .btn-details {
+                padding: 12px;
+                font-size: 15px;
+                border-radius: 12px;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           تحسينات إضافية للتجربة
+           ═══════════════════════════════════════════════════════ */
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* تحسينات لكبار السن */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* تحسين للمس على كل العناصر القابلة للنقر */
+        .btn-back,
+        .specialty-btn,
+        .btn-clear-filter,
+        .clinic-card,
+        .btn-call,
+        .btn-details,
+        select,
+        input {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* تحسين للتمرير السريع */
+        .container,
+        .clinics-grid {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* تحسين لنمط البريد الإلكتروني على iOS */
+        input[type="text"] {
+            text-transform: none;
+        }
+
+        /* منع الزيوم التلقائي على iOS */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+
+        /* تحسين للتماسك اللوني */
+        .specialty-btn:not(.active):hover {
+            background: #e8eaf0;
+        }
+
+        /* تحسين للنصوص الطويلة */
+        .clinic-info span:last-child {
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <!-- حالة الاتصال -->
+    <div class="connection-status online" id="connectionStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">متصل</span>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="btn-back" aria-label="الرجوع">←</a>
+        <h1>📋 جميع العيادات</h1>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2>🔍 تصفية حسب التخصص</h2>
+            <div class="specialty-filters" id="specialtyFilters">
+                <!-- سيتم ملؤها بـ JavaScript -->
+            </div>
+            <button class="btn-clear-filter" id="clearFilterBtn" onclick="clearFilter()">
+                ✖️ إلغاء التصفية - عرض الكل
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <h3>العيادات المتاحة</h3>
+            <span class="stats-count" id="clinicsCount">0</span>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري تحميل العيادات...</p>
+        </div>
+
+        <!-- Clinics Grid -->
+        <div class="clinics-grid" id="clinicsGrid" style="display: none;">
+            <!-- سيتم ملؤها بـ JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="icon">🏥</div>
+            <h3>لا توجد عيادات متاحة</h3>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let allClinics = [];
+        let filteredClinics = [];
+        let currentFilter = null;
+
+        // ═══════════════════════════════════════════════════════
+        // متابعة حالة الاتصال
+        // ═══════════════════════════════════════════════════════
+
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+            
+            if (navigator.onLine) {
+                status.className = 'connection-status online';
+                statusText.textContent = 'متصل';
+            } else {
+                status.className = 'connection-status offline';
+                statusText.textContent = 'غير متصل';
+            }
+        }
+
+        updateConnectionStatus();
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // ═══════════════════════════════════════════════════════
+        // تحميل التخصصات
+        // ═══════════════════════════════════════════════════════
+
+        async function loadSpecialties() {
+            try {
+                const response = await fetch(`${API_URL}/specialties`);
+                const data = await response.json();
+                
+                const filtersDiv = document.getElementById('specialtyFilters');
+                
+                filtersDiv.innerHTML = data.specialties.map(specialty => `
+                    <button 
+                        class="specialty-btn" 
+                        onclick="filterBySpecialty('${specialty.name_ar}')"
+                        data-specialty="${specialty.name_ar}"
+                        role="button"
+                        aria-label="تصفية ${specialty.name_ar}"
+                    >
+                        <span class="icon">${specialty.icon || '🏥'}</span>
+                        <span>${specialty.name_ar}</span>
+                    </button>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading specialties:', error);
+                // بيانات محلية كـ backup
+                const localSpecialties = [
+                    { name_ar: 'باطنة', icon: '🏥' },
+                    { name_ar: 'أسنان', icon: '🦷' },
+                    { name_ar: 'عيون', icon: '👁️' },
+                    { name_ar: 'أطفال', icon: '👶' },
+                    { name_ar: 'قلب', icon: '❤️' },
+                    { name_ar: 'جلدية', icon: '🎨' }
+                ];
+                const filtersDiv = document.getElementById('specialtyFilters');
+                filtersDiv.innerHTML = localSpecialties.map(specialty => `
+                    <button 
+                        class="specialty-btn" 
+                        onclick="filterBySpecialty('${specialty.name_ar}')"
+                        data-specialty="${specialty.name_ar}"
+                        role="button"
+                        aria-label="تصفية ${specialty.name_ar}"
+                    >
+                        <span class="icon">${specialty.icon}</span>
+                        <span>${specialty.name_ar}</span>
+                    </button>
+                `).join('');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // تحميل العيادات
+        // ═══════════════════════════════════════════════════════
+
+        async function loadClinics() {
+            try {
+                const response = await fetch(`${API_URL}/clinics`);
+                const data = await response.json();
+                
+                allClinics = data.clinics || [];
+                filteredClinics = allClinics;
+                
+                if (!allClinics.length) {
+                    showEmptyState();
+                } else {
+                    displayClinics(filteredClinics);
+                }
+                
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading clinics:', error);
+                document.getElementById('loading').style.display = 'none';
+                
+                // بيانات محلية كـ backup
+                if (!navigator.onLine) {
+                    loadLocalClinics();
+                } else {
+                    showEmptyState();
+                }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // عرض العيادات
+        // ═══════════════════════════════════════════════════════
+
+        function displayClinics(clinics) {
+            const grid = document.getElementById('clinicsGrid');
+            const count = document.getElementById('clinicsCount');
+            const emptyState = document.getElementById('emptyState');
+
+            count.textContent = clinics.length;
+
+            if (clinics.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.classList.remove('active');
+
+            grid.innerHTML = clinics.map(clinic => `
+                <div class="clinic-card" onclick="goToClinic(${clinic.id})" role="button" tabindex="0" aria-label="عرض تفاصيل ${clinic.name}">
+                    <div class="clinic-header">
+                        <h3>${clinic.name}</h3>
+                        <span class="specialty-badge">
+                            ${clinic.specialty_icon || '🏥'} ${clinic.specialty_name}
+                        </span>
+                    </div>
+                    
+                    <div class="clinic-info">
+                        <span class="icon">📍</span>
+                        <span>${clinic.address}</span>
+                    </div>
+                    
+                    <div class="clinic-info">
+                        <span class="icon">📞</span>
+                        <span>${clinic.phone}</span>
+                    </div>
+                    
+                    ${clinic.working_hours ? `
+                        <div class="clinic-info">
+                            <span class="icon">🕐</span>
+                            <span>${clinic.working_hours}</span>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="clinic-actions">
+                        <button class="btn-call" onclick="event.stopPropagation(); callClinic('${clinic.phone}')" aria-label="اتصال ${clinic.phone}">
+                            📞 اتصل
+                        </button>
+                        <button class="btn-details" onclick="event.stopPropagation(); goToClinic(${clinic.id})" aria-label="عرض تفاصيل ${clinic.name}">
+                            عرض التفاصيل
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // إضافة دعم لوحة المفاتيح للبطاقات
+            const cards = grid.querySelectorAll('.clinic-card');
+            cards.forEach(card => {
+                card.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // عرض حالة فارغة
+        // ═══════════════════════════════════════════════════════
+
+        function showEmptyState() {
+            document.getElementById('clinicsGrid').style.display = 'none';
+            document.getElementById('emptyState').classList.add('active');
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // تحميل عيادات محلية (backup)
+        // ═══════════════════════════════════════════════════════
+
+        function loadLocalClinics() {
+            const localClinics = [
+                {
+                    id: 1,
+                    name: 'عيادة الأمل',
+                    specialty_name: 'باطنة',
+                    specialty_icon: '🏥',
+                    address: 'الرياض - شارع الملك فهد',
+                    phone: '0112345678',
+                    working_hours: '8:00 - 20:00'
+                },
+                {
+                    id: 2,
+                    name: 'دكتور أحمد للأسنان',
+                    specialty_name: 'أسنان',
+                    specialty_icon: '🦷',
+                    address: 'الرياض - حي النخيل',
+                    phone: '0118765432',
+                    working_hours: '9:00 - 18:00'
+                },
+                {
+                    id: 3,
+                    name: 'عيادة العيون المتقدمة',
+                    specialty_name: 'عيون',
+                    specialty_icon: '👁️',
+                    address: 'الرياض - حي الملك فهد',
+                    phone: '0112345679',
+                    working_hours: '10:00 - 19:00'
+                },
+                {
+                    id: 4,
+                    name: 'مركز الأطفال الصحي',
+                    specialty_name: 'أطفال',
+                    specialty_icon: '👶',
+                    address: 'الرياض - حي النزهة',
+                    phone: '0118765433',
+                    working_hours: '8:00 - 17:00'
+                }
+            ];
+
+            allClinics = localClinics;
+            filteredClinics = allClinics;
+            displayClinics(filteredClinics);
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // التصفية حسب التخصص
+        // ═══════════════════════════════════════════════════════
+
+        function filterBySpecialty(specialty) {
+            currentFilter = specialty;
+            
+            // تحديث الأزرار
+            document.querySelectorAll('.specialty-btn').forEach(btn => {
+                if (btn.dataset.specialty === specialty) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // تصفية العيادات
+            filteredClinics = allClinics.filter(clinic => 
+                clinic.specialty_name === specialty
+            );
+
+            displayClinics(filteredClinics);
+
+            // إظهار زر إلغاء التصفية
+            document.getElementById('clearFilterBtn').classList.add('active');
+
+            // التمرير إلى قسم النتائج على الهواتف
+            if (window.innerWidth <= 768) {
+                document.getElementById('clinicsCount').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // إلغاء التصفية
+        // ═══════════════════════════════════════════════════════
+
+        function clearFilter() {
+            currentFilter = null;
+            filteredClinics = allClinics;
+            
+            document.querySelectorAll('.specialty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            displayClinics(filteredClinics);
+            
+            document.getElementById('clearFilterBtn').classList.remove('active');
+
+            // التمرير إلى قسم النتائج على الهواتف
+            if (window.innerWidth <= 768) {
+                document.getElementById('clinicsCount').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // الاتصال بالعيادة
+        // ═══════════════════════════════════════════════════════
+
+        function callClinic(phone) {
+            if (phone && phone !== 'undefined') {
+                window.location.href = `tel:${phone}`;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // الانتقال لصفحة التفاصيل
+        // ═══════════════════════════════════════════════════════
+
+        function goToClinic(id) {
+            window.location.href = `clinic-detail.html?id=${id}`;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // تحميل البيانات عند فتح الصفحة
+        // ═══════════════════════════════════════════════════════
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSpecialties();
+            loadClinics();
+        });
+    </script>
+</body>
+</html>
