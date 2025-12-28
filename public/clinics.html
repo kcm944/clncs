@@ -807,6 +807,11 @@
     </div>
 
     <script>
+        // المتغيرات العالمية
+        let allClinics = [];
+        let filteredClinics = [];
+        let currentFilter = null;
+
         // ═══════════════════════════════════════════════════════
         // متابعة حالة الاتصال
         // ═══════════════════════════════════════════════════════
@@ -835,20 +840,23 @@
                 const response = await fetch('http://localhost:3000/api/specialties');
                 const data = await response.json();
 
-                const filtersDiv = document.getElementById('specialtyFilters');
-
-                filtersDiv.innerHTML = data.specialties.map(specialty => `
-                    <button
-                        class="specialty-btn"
-                        onclick="filterBySpecialty('${specialty.name_ar}')"
-                        data-specialty="${specialty.name_ar}"
-                        role="button"
-                        aria-label="تصفية ${specialty.name_ar}"
-                    >
-                        <span class="icon">${specialty.icon || '🏥'}</span>
-                        <span>${specialty.name_ar}</span>
-                    </button>
-                `).join('');
+                if (data.success && data.specialties && data.specialties.length > 0) {
+                    const filtersDiv = document.getElementById('specialtyFilters');
+                    filtersDiv.innerHTML = data.specialties.map(specialty => `
+                        <button
+                            class="specialty-btn"
+                            onclick="filterBySpecialty('${specialty.name_ar}')"
+                            data-specialty="${specialty.name_ar}"
+                            role="button"
+                            aria-label="تصفية ${specialty.name_ar}"
+                        >
+                            <span class="icon">${specialty.icon || '🏥'}</span>
+                            <span>${specialty.name_ar}</span>
+                        </button>
+                    `).join('');
+                } else {
+                    console.warn('No specialties found or invalid data format');
+                }
             } catch (error) {
                 console.error('Error loading specialties:', error);
                 // بيانات محلية كـ backup
@@ -884,26 +892,27 @@
                 const response = await fetch('http://localhost:3000/api/clinics');
                 const data = await response.json();
 
-                allClinics = data.clinics || [];
-                filteredClinics = allClinics;
-
-                if (!allClinics.length) {
+                if (data.success && data.clinics && data.clinics.length > 0) {
+                    allClinics = data.clinics;
+                    filteredClinics = allClinics;
+                    displayClinics(filteredClinics);
+                } else if (data.success) {
+                    // لا توجد عيادات
                     showEmptyState();
                 } else {
-                    displayClinics(filteredClinics);
+                    console.error('Error from API:', data.error);
+                    showEmptyState();
                 }
-
-                document.getElementById('loading').style.display = 'none';
             } catch (error) {
                 console.error('Error loading clinics:', error);
-                document.getElementById('loading').style.display = 'none';
-
                 // بيانات محلية كـ backup
                 if (!navigator.onLine) {
                     loadLocalClinics();
                 } else {
                     showEmptyState();
                 }
+            } finally {
+                document.getElementById('loading').style.display = 'none';
             }
         }
 
@@ -928,20 +937,20 @@
             grid.innerHTML = clinics.map(clinic => `
                 <div class="clinic-card" onclick="goToClinic(${clinic.id})" role="button" tabindex="0" aria-label="عرض تفاصيل ${clinic.name}">
                     <div class="clinic-header">
-                        <h3>${clinic.name}</h3>
+                        <h3>${clinic.name || 'غير محدد'}</h3>
                         <span class="specialty-badge">
-                            ${clinic.specialty_icon || '🏥'} ${clinic.specialty_name}
+                            ${clinic.specialty_icon || '🏥'} ${clinic.specialty_name || 'غير محدد'}
                         </span>
                     </div>
 
                     <div class="clinic-info">
                         <span class="icon">📍</span>
-                        <span>${clinic.address}</span>
+                        <span>${clinic.address || 'غير محدد'}</span>
                     </div>
 
                     <div class="clinic-info">
                         <span class="icon">📞</span>
-                        <span>${clinic.phone}</span>
+                        <span>${clinic.phone || 'غير محدد'}</span>
                     </div>
 
                     ${clinic.working_hours ? `
@@ -1028,7 +1037,6 @@
             allClinics = localClinics;
             filteredClinics = allClinics;
             displayClinics(filteredClinics);
-            document.getElementById('loading').style.display = 'none';
         }
 
         // ═══════════════════════════════════════════════════════
