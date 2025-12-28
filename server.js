@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// Healthcare Directory API - Ultimate Optimized Version for Render.com
+// Healthcare Directory API - Final Optimized Version for Render.com
 // Features: PostgreSQL, JWT Auth, Rate Limiting, CORS, Error Handling, Transactions
+// Fixed: View conflicts, DB connection, error handling, and data type compatibility
 // ═══════════════════════════════════════════════════════════════════════════
 
 require('dotenv').config();
@@ -69,7 +70,7 @@ async function initializeDatabase() {
         latitude REAL,
         longitude REAL,
         notes TEXT,
-        is_active BOOLEAN DEFAULT TRUE,
+        is_active INTEGER DEFAULT 1,  -- Changed to INTEGER for compatibility
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_specialty
@@ -79,7 +80,7 @@ async function initializeDatabase() {
       )
     `);
 
-    // Create view with clear column naming
+    // Create view with clear column naming and INTEGER compatibility
     await client.query(`
       CREATE OR REPLACE VIEW clinics_full_info AS
       SELECT
@@ -100,7 +101,7 @@ async function initializeDatabase() {
         c.last_updated
       FROM clinics c
       JOIN specialties s ON c.specialty_id = s.id
-      WHERE c.is_active = TRUE
+      WHERE c.is_active = 1  -- Using 1 instead of TRUE for compatibility
       ORDER BY s.display_order, c.name
     `);
 
